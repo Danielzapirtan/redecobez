@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ro">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redecorează apartamentul</title>
+    <title>Redecorează apartamentul - Minimalist cu Plante</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -38,9 +38,18 @@
             margin-bottom: 10px;
         }
         
+        .tagline {
+            color: #27ae60;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
         .subtitle {
             color: #7f8c8d;
             font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
         }
         
         .app-container {
@@ -75,10 +84,16 @@
             margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
         }
         
         .upload-area {
-            border: 2px dashed #3498db;
+            border: 2px dashed #27ae60;
             border-radius: 8px;
             padding: 40px 20px;
             text-align: center;
@@ -89,13 +104,13 @@
         }
         
         .upload-area:hover {
-            background-color: #e8f4fc;
-            border-color: #2980b9;
+            background-color: #e8f8f0;
+            border-color: #219653;
         }
         
         .upload-icon {
             font-size: 3rem;
-            color: #3498db;
+            color: #27ae60;
             margin-bottom: 15px;
         }
         
@@ -146,13 +161,13 @@
         }
         
         .style-option:hover {
-            border-color: #3498db;
+            border-color: #27ae60;
             transform: translateY(-3px);
         }
         
         .style-option.active {
-            border-color: #2ecc71;
-            background-color: #f0f9f4;
+            border-color: #27ae60;
+            background-color: #e8f8f0;
         }
         
         .style-icon {
@@ -170,16 +185,38 @@
             margin-top: 25px;
         }
         
+        .furniture-categories {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .category-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .category-tab.active {
+            color: #27ae60;
+            border-bottom-color: #27ae60;
+        }
+        
         .furniture-items {
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
             margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 5px;
         }
         
         .furniture-item {
-            width: 80px;
-            height: 80px;
+            width: 90px;
+            height: 90px;
             border-radius: 8px;
             display: flex;
             flex-direction: column;
@@ -193,8 +230,13 @@
         }
         
         .furniture-item:hover {
-            border-color: #3498db;
+            border-color: #27ae60;
             transform: scale(1.05);
+        }
+        
+        .furniture-item.plant-item {
+            background-color: #f0f9f4;
+            border-color: #c8e6c9;
         }
         
         .furniture-icon {
@@ -290,12 +332,12 @@
         }
         
         .btn-primary {
-            background-color: #3498db;
+            background-color: #27ae60;
             color: white;
         }
         
         .btn-primary:hover {
-            background-color: #2980b9;
+            background-color: #219653;
         }
         
         .btn-secondary {
@@ -308,25 +350,32 @@
         }
         
         .btn-success {
-            background-color: #2ecc71;
+            background-color: #27ae60;
             color: white;
         }
         
         .btn-success:hover {
-            background-color: #27ae60;
+            background-color: #219653;
         }
         
         .instructions {
             margin-top: 30px;
-            background-color: #f0f7ff;
+            background-color: #f0f9f4;
             padding: 20px;
             border-radius: 8px;
-            border-left: 4px solid #3498db;
+            border-left: 4px solid #27ae60;
         }
         
         .instructions h3 {
             color: #2c3e50;
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .instructions h3 i {
+            margin-right: 10px;
+            color: #27ae60;
         }
         
         .instructions ol {
@@ -335,6 +384,11 @@
         
         .instructions li {
             margin-bottom: 8px;
+        }
+        
+        .plant-highlight {
+            color: #27ae60;
+            font-weight: 600;
         }
         
         footer {
@@ -352,15 +406,6 @@
             }
         }
         
-        .color-indicator {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-        
         .selected-style {
             margin-top: 15px;
             padding: 10px;
@@ -369,18 +414,82 @@
             display: flex;
             align-items: center;
         }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background-color: #f0f9f4;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #27ae60;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #555;
+        }
+        
+        .quick-add-plants {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .quick-plant-btn {
+            padding: 8px 15px;
+            background-color: #e8f8f0;
+            border: 1px solid #c8e6c9;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+        
+        .quick-plant-btn:hover {
+            background-color: #d4edd9;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-paint-roller"></i> Redecorează apartamentul</h1>
-            <p class="subtitle">Încarcă planurile camerelor și redecorează-le cu mobilier în stilul tău preferat</p>
+            <h1><i class="fas fa-leaf"></i> Redecorează apartamentul</h1>
+            <p class="tagline">Minimalist cu multe plante</p>
+            <p class="subtitle">Încarcă planul camerelor și creează un spațiu minimalist plin de plante pentru o atmosferă liniștită și naturală</p>
         </header>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number" id="totalPlants">0</div>
+                <div class="stat-label">Plante plasate</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="totalFurniture">0</div>
+                <div class="stat-label">Mobile totale</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="furnitureRatio">0:0</div>
+                <div class="stat-label">Raport plante/mobile</div>
+            </div>
+        </div>
         
         <div class="app-container">
             <section class="upload-section">
-                <h2 class="section-title">1. Încarcă planul camerei</h2>
+                <h2 class="section-title"><i class="fas fa-upload"></i> 1. Încarcă planul camerei</h2>
                 <div class="upload-area" id="uploadArea">
                     <div class="upload-icon">
                         <i class="fas fa-cloud-upload-alt"></i>
@@ -398,109 +507,160 @@
                 </div>
                 
                 <div class="style-selection">
-                    <h2 class="section-title">2. Alege un stil de decorare</h2>
+                    <h2 class="section-title"><i class="fas fa-palette"></i> 2. Alege un stil minimalist</h2>
                     <div class="style-options">
-                        <div class="style-option" data-style="modern">
-                            <div class="style-icon"><i class="fas fa-cube"></i></div>
-                            <div class="style-name">Modern</div>
-                        </div>
-                        <div class="style-option" data-style="minimalist">
+                        <div class="style-option active" data-style="minimalist">
                             <div class="style-icon"><i class="fas fa-border-style"></i></div>
                             <div class="style-name">Minimalist</div>
-                        </div>
-                        <div class="style-option" data-style="rustic">
-                            <div class="style-icon"><i class="fas fa-tree"></i></div>
-                            <div class="style-name">Rustic</div>
-                        </div>
-                        <div class="style-option" data-style="industrial">
-                            <div class="style-icon"><i class="fas fa-industry"></i></div>
-                            <div class="style-name">Industrial</div>
                         </div>
                         <div class="style-option" data-style="scandinavian">
                             <div class="style-icon"><i class="fas fa-snowflake"></i></div>
                             <div class="style-name">Scandinavian</div>
                         </div>
+                        <div class="style-option" data-style="japanese">
+                            <div class="style-icon"><i class="fas fa-mountain"></i></div>
+                            <div class="style-name">Japonez</div>
+                        </div>
                         <div class="style-option" data-style="bohemian">
                             <div class="style-icon"><i class="fas fa-feather-alt"></i></div>
-                            <div class="style-name">Bohemian</div>
+                            <div class="style-name">Bohemian Green</div>
                         </div>
                     </div>
                     
-                    <div class="selected-style" id="selectedStyle">
-                        <strong>Stil selectat:</strong> <span id="currentStyle">Niciun stil selectat</span>
+                    <div class="quick-add-plants">
+                        <div class="quick-plant-btn" id="addPlantGroup">
+                            <i class="fas fa-plus"></i> Adaugă 3 plante
+                        </div>
+                        <div class="quick-plant-btn" id="addPlantWall">
+                            <i class="fas fa-plus"></i> Plante pe perete
+                        </div>
+                        <div class="quick-plant-btn" id="addPlantCorner">
+                            <i class="fas fa-plus"></i> Colț cu plante
+                        </div>
                     </div>
                 </div>
                 
                 <div class="furniture-selection">
-                    <h2 class="section-title">3. Selectează mobilier</h2>
-                    <div class="furniture-items">
-                        <div class="furniture-item" data-type="sofa" data-icon="fas fa-couch">
+                    <h2 class="section-title"><i class="fas fa-couch"></i> 3. Selectează mobilier (puțin)</h2>
+                    
+                    <div class="furniture-categories">
+                        <div class="category-tab active" data-category="plants">Plante</div>
+                        <div class="category-tab" data-category="essential">Esențiale</div>
+                        <div class="category-tab" data-category="decor">Decor</div>
+                    </div>
+                    
+                    <div class="furniture-items" id="plantsTab">
+                        <div class="furniture-item plant-item" data-type="plant-large" data-icon="fas fa-seedling" data-category="plants">
+                            <div class="furniture-icon"><i class="fas fa-seedling"></i></div>
+                            <div class="furniture-name">Plantă mare</div>
+                        </div>
+                        <div class="furniture-item plant-item" data-type="plant-medium" data-icon="fas fa-leaf" data-category="plants">
+                            <div class="furniture-icon"><i class="fas fa-leaf"></i></div>
+                            <div class="furniture-name">Plantă medie</div>
+                        </div>
+                        <div class="furniture-item plant-item" data-type="plant-small" data-icon="fas fa-spa" data-category="plants">
+                            <div class="furniture-icon"><i class="fas fa-spa"></i></div>
+                            <div class="furniture-name">Plantă mică</div>
+                        </div>
+                        <div class="furniture-item plant-item" data-type="plant-hanging" data-icon="fas fa-tree" data-category="plants">
+                            <div class="furniture-icon"><i class="fas fa-tree"></i></div>
+                            <div class="furniture-name">Plantă agățată</div>
+                        </div>
+                        <div class="furniture-item plant-item" data-type="succulent" data-icon="fas fa-pagelines" data-category="plants">
+                            <div class="furniture-icon"><i class="fas fa-pagelines"></i></div>
+                            <div class="furniture-name">Succulentă</div>
+                        </div>
+                        <div class="furniture-item plant-item" data-type="plant-wall" data-icon="fas fa-th-large" data-category="plants">
+                            <div class="furniture-icon"><i class="fas fa-th-large"></i></div>
+                            <div class="furniture-name">Perete verde</div>
+                        </div>
+                        <div class="furniture-item plant-item" data-type="plant-corner" data-icon="fas fa-vector-square" data-category="plants">
+                            <div class="furniture-icon"><i class="fas fa-vector-square"></i></div>
+                            <div class="furniture-name">Colț verde</div>
+                        </div>
+                        <div class="furniture-item plant-item" data-type="plant-stand" data-icon="fas fa-chevron-up" data-category="plants">
+                            <div class="furniture-icon"><i class="fas fa-chevron-up"></i></div>
+                            <div class="furniture-name">Suvită plante</div>
+                        </div>
+                    </div>
+                    
+                    <div class="furniture-items" id="essentialTab" style="display: none;">
+                        <div class="furniture-item" data-type="sofa" data-icon="fas fa-couch" data-category="essential">
                             <div class="furniture-icon"><i class="fas fa-couch"></i></div>
-                            <div class="furniture-name">Scaun</div>
+                            <div class="furniture-name">Scaun simplu</div>
                         </div>
-                        <div class="furniture-item" data-type="bed" data-icon="fas fa-bed">
+                        <div class="furniture-item" data-type="bed" data-icon="fas fa-bed" data-category="essential">
                             <div class="furniture-icon"><i class="fas fa-bed"></i></div>
-                            <div class="furniture-name">Pat</div>
+                            <div class="furniture-name">Pat minimalist</div>
                         </div>
-                        <div class="furniture-item" data-type="table" data-icon="fas fa-utensils">
-                            <div class="furniture-icon"><i class="fas fa-utensils"></i></div>
-                            <div class="furniture-name">Masă</div>
+                        <div class="furniture-item" data-type="table" data-icon="fas fa-square" data-category="essential">
+                            <div class="furniture-icon"><i class="fas fa-square"></i></div>
+                            <div class="furniture-name">Masă mică</div>
                         </div>
-                        <div class="furniture-item" data-type="chair" data-icon="fas fa-chair">
+                        <div class="furniture-item" data-type="chair" data-icon="fas fa-chair" data-category="essential">
                             <div class="furniture-icon"><i class="fas fa-chair"></i></div>
                             <div class="furniture-name">Scaun</div>
                         </div>
-                        <div class="furniture-item" data-type="desk" data-icon="fas fa-desktop">
-                            <div class="furniture-icon"><i class="fas fa-desktop"></i></div>
-                            <div class="furniture-name">Birou</div>
+                        <div class="furniture-item" data-type="storage" data-icon="fas fa-box" data-category="essential">
+                            <div class="furniture-icon"><i class="fas fa-box"></i></div>
+                            <div class="furniture-name">Dulap simplu</div>
                         </div>
-                        <div class="furniture-item" data-type="wardrobe" data-icon="fas fa-archive">
-                            <div class="furniture-icon"><i class="fas fa-archive"></i></div>
-                            <div class="furniture-name">Dulap</div>
-                        </div>
-                        <div class="furniture-item" data-type="lamp" data-icon="fas fa-lightbulb">
+                    </div>
+                    
+                    <div class="furniture-items" id="decorTab" style="display: none;">
+                        <div class="furniture-item" data-type="lamp" data-icon="fas fa-lightbulb" data-category="decor">
                             <div class="furniture-icon"><i class="fas fa-lightbulb"></i></div>
-                            <div class="furniture-name">Lampă</div>
+                            <div class="furniture-name">Lampă simplă</div>
                         </div>
-                        <div class="furniture-item" data-type="plant" data-icon="fas fa-leaf">
-                            <div class="furniture-icon"><i class="fas fa-leaf"></i></div>
-                            <div class="furniture-name">Plantă</div>
+                        <div class="furniture-item" data-type="rug" data-icon="fas fa-square-full" data-category="decor">
+                            <div class="furniture-icon"><i class="fas fa-square-full"></i></div>
+                            <div class="furniture-name">Covoar simplu</div>
+                        </div>
+                        <div class="furniture-item" data-type="shelf" data-icon="fas fa-bars" data-category="decor">
+                            <div class="furniture-icon"><i class="fas fa-bars"></i></div>
+                            <div class="furniture-name">Raft minimalist</div>
+                        </div>
+                        <div class="furniture-item" data-type="mirror" data-icon="fas fa-expand-alt" data-category="decor">
+                            <div class="furniture-icon"><i class="fas fa-expand-alt"></i></div>
+                            <div class="furniture-name">Oglindă simplă</div>
                         </div>
                     </div>
                 </div>
             </section>
             
             <section class="design-section">
-                <h2 class="section-title">4. Zone de decorare</h2>
+                <h2 class="section-title"><i class="fas fa-paint-brush"></i> 4. Zone de decorare minimalistă</h2>
                 <div class="design-area empty" id="designArea">
                     <img class="room-background" id="roomBackground" src="" alt="Room background">
                 </div>
                 
                 <div class="controls">
                     <button class="btn btn-secondary" id="clearBtn">
-                        <i class="fas fa-trash-alt"></i> Șterge tot mobilierul
+                        <i class="fas fa-trash-alt"></i> Șterge tot
                     </button>
                     <button class="btn btn-success" id="saveBtn">
-                        <i class="fas fa-save"></i> Salvează designul
+                        <i class="fas fa-save"></i> Salvează designul minimalist
                     </button>
                 </div>
             </section>
         </div>
         
         <div class="instructions">
-            <h3><i class="fas fa-info-circle"></i> Cum funcționează aplicația:</h3>
+            <h3><i class="fas fa-info-circle"></i> Cum creezi un spațiu minimalist cu multe plante:</h3>
             <ol>
-                <li>Încarcă o imagine cu planul camerei tale (schemă, diagramă sau fotografie)</li>
-                <li>Alege un stil de decorare dintre cele disponibile (Modern, Minimalist, Rustic, etc.)</li>
-                <li>Selectează mobilierul pe care dorești să-l plasezi în cameră</li>
-                <li>Trage mobilierul în zona de decorare și plasează-l unde dorești</li>
-                <li>Poți muta mobilierul după plasare pentru a experimenta cu diferite aranjamente</li>
-                <li>Salvează designul final când ești mulțumit de rezultat</li>
+                <li>Încarcă planul camerei tale</li>
+                <li>Alege un stil <span class="plant-highlight">minimalist</span> sau <span class="plant-highlight">Scandinavian</span> (sunt perfecte pentru plante)</li>
+                <li>Folosește mai mult <span class="plant-highlight">plante</span> și mai puțin mobilier</li>
+                <li>Folosește butoanele rapide pentru a adăuga mai multe plante deodată</li>
+                <li>Trage plantele în zona de decorare pentru a crea un spațiu verde și liniștit</li>
+                <li>Adaugă doar mobilierul <span class="plant-highlight">esențial</span> (un pat, un scaun, o masă mică)</li>
+                <li>Salvează designul când ai un raport optim între plante și mobilier</li>
             </ol>
+            <p style="margin-top: 10px;"><strong>Țintă ideală:</strong> cel puțin 2 plante pentru fiecare mobilă esențială.</p>
         </div>
         
         <footer>
-            <p>Redecorează apartamentul &copy; 2023 | O aplicație pentru decorarea virtuală a spațiilor</p>
+            <p>Redecorează apartamentul - Minimalist cu Plante &copy; 2023 | Spații verzi și liniștite cu mobilier minimal</p>
         </footer>
     </div>
 
@@ -514,44 +674,50 @@
             const roomBackground = document.getElementById('roomBackground');
             const designArea = document.getElementById('designArea');
             const styleOptions = document.querySelectorAll('.style-option');
-            const currentStyleElement = document.getElementById('currentStyle');
+            const categoryTabs = document.querySelectorAll('.category-tab');
             const furnitureItems = document.querySelectorAll('.furniture-item');
             const clearBtn = document.getElementById('clearBtn');
             const saveBtn = document.getElementById('saveBtn');
-            const selectedStyleDiv = document.getElementById('selectedStyle');
+            const totalPlantsElement = document.getElementById('totalPlants');
+            const totalFurnitureElement = document.getElementById('totalFurniture');
+            const furnitureRatioElement = document.getElementById('furnitureRatio');
+            const addPlantGroupBtn = document.getElementById('addPlantGroup');
+            const addPlantWallBtn = document.getElementById('addPlantWall');
+            const addPlantCornerBtn = document.getElementById('addPlantCorner');
             
             // App state
-            let selectedStyle = null;
+            let selectedStyle = 'minimalist';
             let selectedFurniture = null;
             let furnitureCounter = 0;
+            let plantCount = 0;
+            let essentialCount = 0;
             
             // Style color mapping
             const styleColors = {
-                modern: '#3498db',
-                minimalist: '#95a5a6',
-                rustic: '#d35400',
-                industrial: '#34495e',
-                scandinavian: '#ecf0f1',
+                minimalist: '#27ae60',
+                scandinavian: '#3498db',
+                japanese: '#e74c3c',
                 bohemian: '#9b59b6'
             };
             
             // Style display names
             const styleNames = {
-                modern: 'Modern',
                 minimalist: 'Minimalist',
-                rustic: 'Rustic',
-                industrial: 'Industrial',
                 scandinavian: 'Scandinavian',
-                bohemian: 'Bohemian'
+                japanese: 'Japonez',
+                bohemian: 'Bohemian Green'
             };
             
             // Initialize the app
             function init() {
-                // Initially hide the selected style indicator
-                selectedStyleDiv.style.display = 'none';
+                // Set minimalist as default selected style
+                document.querySelector('.style-option[data-style="minimalist"]').classList.add('active');
                 
                 // Set up event listeners
                 setupEventListeners();
+                
+                // Update stats initially
+                updateStats();
             }
             
             // Set up all event listeners
@@ -565,6 +731,11 @@
                 // Style selection events
                 styleOptions.forEach(option => {
                     option.addEventListener('click', handleStyleSelection);
+                });
+                
+                // Category tab events
+                categoryTabs.forEach(tab => {
+                    tab.addEventListener('click', handleCategoryTabClick);
                 });
                 
                 // Furniture selection events
@@ -581,6 +752,11 @@
                 // Control buttons
                 clearBtn.addEventListener('click', clearAllFurniture);
                 saveBtn.addEventListener('click', saveDesign);
+                
+                // Quick add plant buttons
+                addPlantGroupBtn.addEventListener('click', () => addPlantGroup());
+                addPlantWallBtn.addEventListener('click', () => addPlantWall());
+                addPlantCornerBtn.addEventListener('click', () => addPlantCorner());
             }
             
             // Handle room image upload
@@ -631,15 +807,29 @@
                 // Update selected style
                 selectedStyle = style;
                 
-                // Update the selected style indicator
-                currentStyleElement.innerHTML = `
-                    <span class="color-indicator" style="background-color: ${styleColors[style]}"></span>
-                    ${styleNames[style]}
-                `;
-                selectedStyleDiv.style.display = 'flex';
-                
                 // Update furniture colors based on selected style
                 updateFurnitureColors(style);
+            }
+            
+            // Handle category tab click
+            function handleCategoryTabClick(event) {
+                const tab = event.currentTarget;
+                const category = tab.getAttribute('data-category');
+                
+                // Remove active class from all tabs
+                categoryTabs.forEach(t => {
+                    t.classList.remove('active');
+                });
+                
+                // Add active class to selected tab
+                tab.classList.add('active');
+                
+                // Show corresponding furniture tab
+                document.querySelectorAll('.furniture-items').forEach(items => {
+                    items.style.display = 'none';
+                });
+                
+                document.getElementById(`${category}Tab`).style.display = 'flex';
             }
             
             // Update furniture colors based on selected style
@@ -657,18 +847,20 @@
                 const furnitureElement = event.currentTarget;
                 const type = furnitureElement.getAttribute('data-type');
                 const iconClass = furnitureElement.getAttribute('data-icon');
+                const category = furnitureElement.getAttribute('data-category');
                 
                 selectedFurniture = {
                     type: type,
                     icon: iconClass,
-                    color: selectedStyle ? styleColors[selectedStyle] : '#3498db'
+                    color: styleColors[selectedStyle],
+                    category: category
                 };
                 
                 // Add visual feedback for selected furniture
                 furnitureItems.forEach(item => {
-                    item.style.borderColor = '#eee';
+                    item.style.borderColor = item.classList.contains('plant-item') ? '#c8e6c9' : '#eee';
                 });
-                furnitureElement.style.borderColor = '#2ecc71';
+                furnitureElement.style.borderColor = '#27ae60';
                 
                 // If design area is empty (no room image), show a message
                 if (designArea.classList.contains('empty')) {
@@ -723,6 +915,7 @@
                 furniture.style.top = `${y}px`;
                 furniture.style.color = selectedFurniture.color;
                 furniture.setAttribute('data-type', selectedFurniture.type);
+                furniture.setAttribute('data-category', selectedFurniture.category);
                 
                 furniture.innerHTML = `
                     <div class="furniture-icon"><i class="${selectedFurniture.icon}"></i></div>
@@ -734,6 +927,16 @@
                 
                 // Add to design area
                 designArea.appendChild(furniture);
+                
+                // Update counts based on category
+                if (selectedFurniture.category === 'plants') {
+                    plantCount++;
+                } else if (selectedFurniture.category === 'essential') {
+                    essentialCount++;
+                }
+                
+                // Update stats
+                updateStats();
             }
             
             // Make furniture element draggable
@@ -808,6 +1011,116 @@
                 }
             }
             
+            // Update statistics
+            function updateStats() {
+                const totalFurniture = plantCount + essentialCount;
+                const ratio = essentialCount > 0 ? `${plantCount}:${essentialCount}` : `${plantCount}:0`;
+                
+                totalPlantsElement.textContent = plantCount;
+                totalFurnitureElement.textContent = totalFurniture;
+                furnitureRatioElement.textContent = ratio;
+                
+                // Visual feedback for good plant-to-furniture ratio
+                if (plantCount >= essentialCount * 2 && essentialCount > 0) {
+                    furnitureRatioElement.style.color = '#27ae60';
+                } else if (plantCount > essentialCount && essentialCount > 0) {
+                    furnitureRatioElement.style.color = '#f39c12';
+                } else {
+                    furnitureRatioElement.style.color = '#e74c3c';
+                }
+            }
+            
+            // Add a group of plants
+            function addPlantGroup() {
+                if (designArea.classList.contains('empty')) {
+                    alert('Te rog încarcă mai întâi un plan al camerei.');
+                    return;
+                }
+                
+                const rect = designArea.getBoundingClientRect();
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                // Create 3 plants in a small group
+                const plantTypes = ['plant-large', 'plant-medium', 'plant-small'];
+                const plantIcons = ['fas fa-seedling', 'fas fa-leaf', 'fas fa-spa'];
+                
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        const x = centerX - 50 + Math.random() * 100;
+                        const y = centerY - 50 + Math.random() * 100;
+                        
+                        selectedFurniture = {
+                            type: plantTypes[i],
+                            icon: plantIcons[i],
+                            color: styleColors[selectedStyle],
+                            category: 'plants'
+                        };
+                        
+                        placeFurniture(x, y);
+                    }, i * 100);
+                }
+            }
+            
+            // Add a plant wall
+            function addPlantWall() {
+                if (designArea.classList.contains('empty')) {
+                    alert('Te rog încarcă mai întâi un plan al camerei.');
+                    return;
+                }
+                
+                const rect = designArea.getBoundingClientRect();
+                const wallX = 50; // Near left wall
+                
+                // Create 4 plants in a vertical line (wall arrangement)
+                for (let i = 0; i < 4; i++) {
+                    setTimeout(() => {
+                        const y = 100 + i * 80;
+                        
+                        selectedFurniture = {
+                            type: 'plant-hanging',
+                            icon: 'fas fa-tree',
+                            color: styleColors[selectedStyle],
+                            category: 'plants'
+                        };
+                        
+                        placeFurniture(wallX, y);
+                    }, i * 100);
+                }
+            }
+            
+            // Add a plant corner
+            function addPlantCorner() {
+                if (designArea.classList.contains('empty')) {
+                    alert('Te rog încarcă mai întâi un plan al camerei.');
+                    return;
+                }
+                
+                const rect = designArea.getBoundingClientRect();
+                const cornerX = rect.width - 100; // Near right wall
+                const cornerY = rect.height - 150; // Near bottom
+                
+                // Create 3 plants in a corner arrangement
+                const cornerPlants = [
+                    {type: 'plant-corner', icon: 'fas fa-vector-square', x: cornerX, y: cornerY},
+                    {type: 'plant-medium', icon: 'fas fa-leaf', x: cornerX - 60, y: cornerY - 40},
+                    {type: 'plant-small', icon: 'fas fa-spa', x: cornerX - 30, y: cornerY - 80}
+                ];
+                
+                cornerPlants.forEach((plant, i) => {
+                    setTimeout(() => {
+                        selectedFurniture = {
+                            type: plant.type,
+                            icon: plant.icon,
+                            color: styleColors[selectedStyle],
+                            category: 'plants'
+                        };
+                        
+                        placeFurniture(plant.x, plant.y);
+                    }, i * 100);
+                });
+            }
+            
             // Clear all furniture from design area
             function clearAllFurniture() {
                 const placedFurniture = document.querySelectorAll('.furniture-placed');
@@ -821,6 +1134,11 @@
                     placedFurniture.forEach(item => {
                         item.remove();
                     });
+                    
+                    // Reset counters
+                    plantCount = 0;
+                    essentialCount = 0;
+                    updateStats();
                 }
             }
             
@@ -838,24 +1156,24 @@
                     return;
                 }
                 
-                if (!selectedStyle) {
-                    alert('Te rog selectează un stil de decorare înainte de a salva.');
-                    return;
+                // Check if we have enough plants compared to furniture
+                if (essentialCount > 0 && plantCount < essentialCount) {
+                    if (!confirm(`Ai ${plantCount} plante și ${essentialCount} mobile esențiale. Recomandăm mai multe plante pentru un spațiu minimalist. Dorești să continui?`)) {
+                        return;
+                    }
                 }
                 
                 // In a real app, this would save to a server or generate an image
-                // For this demo, we'll just show a success message
                 const styleName = styleNames[selectedStyle];
-                alert(`Designul tău în stil ${styleName} a fost salvat! Într-o aplicație reală, ai putea descărca o imagine sau partaja designul.`);
+                alert(`Designul tău minimalist în stil ${styleName} cu ${plantCount} plante a fost salvat! Ai creat un spațiu verde și liniștit.`);
                 
                 // Log design details to console (for demo purposes)
-                console.log('Design salvat cu următoarele detalii:');
+                console.log('Design minimalist salvat:');
                 console.log('- Stil:', styleName);
-                console.log('- Număr de mobile:', placedFurniture.length);
-                console.log('- Tipuri de mobile:');
-                placedFurniture.forEach(item => {
-                    console.log('  -', item.getAttribute('data-type'));
-                });
+                console.log('- Plante:', plantCount);
+                console.log('- Mobile esențiale:', essentialCount);
+                console.log('- Raport plante/mobile:', plantCount + ':' + essentialCount);
+                console.log('- Total obiecte:', placedFurniture.length);
             }
             
             // Initialize the app
