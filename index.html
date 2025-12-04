@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redecorează apartamentul - Minimalist cu Plante</title>
+    <title>Redecorează apartamentul - Minimalist cu Plante + 3D</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -249,15 +250,22 @@
             text-align: center;
         }
         
-        .design-area {
+        .design-area-container {
+            position: relative;
             flex-grow: 1;
-            border: 2px dashed #ddd;
             border-radius: 8px;
             margin-top: 20px;
+            overflow: hidden;
+            min-height: 500px;
+            border: 2px dashed #ddd;
+        }
+        
+        .design-area {
+            width: 100%;
+            height: 500px;
             position: relative;
             overflow: hidden;
             background-color: #f9f9f9;
-            min-height: 500px;
         }
         
         .design-area.empty::before {
@@ -310,6 +318,40 @@
             border-radius: 3px;
         }
         
+        #view3DContainer {
+            display: none;
+            width: 100%;
+            height: 500px;
+            position: relative;
+        }
+        
+        .view-toggle {
+            display: flex;
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 5px;
+        }
+        
+        .view-btn {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .view-btn.active {
+            background-color: #27ae60;
+            color: white;
+        }
+        
+        .view-btn:not(.active):hover {
+            background-color: #e8f8f0;
+        }
+        
         .controls {
             display: flex;
             justify-content: space-between;
@@ -358,6 +400,15 @@
             background-color: #219653;
         }
         
+        .btn-info {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background-color: #2980b9;
+        }
+        
         .instructions {
             margin-top: 30px;
             background-color: #f0f9f4;
@@ -388,6 +439,16 @@
         
         .plant-highlight {
             color: #27ae60;
+            font-weight: 600;
+        }
+        
+        .ai-highlight {
+            color: #3498db;
+            font-weight: 600;
+        }
+        
+        .three-d-highlight {
+            color: #9b59b6;
             font-weight: 600;
         }
         
@@ -422,10 +483,14 @@
             padding: 15px;
             border-radius: 8px;
             margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
         
         .stat-item {
             text-align: center;
+            flex: 1;
+            min-width: 120px;
         }
         
         .stat-number {
@@ -462,14 +527,114 @@
         .quick-plant-btn:hover {
             background-color: #d4edd9;
         }
+        
+        .ai-suggestions {
+            margin-top: 25px;
+            background-color: #e8f4fc;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .ai-suggestions h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .ai-suggestions h3 i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+        
+        .ai-suggestions-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .ai-suggestion-btn {
+            padding: 8px 15px;
+            background-color: white;
+            border: 1px solid #3498db;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+        
+        .ai-suggestion-btn:hover {
+            background-color: #d6eaf8;
+        }
+        
+        .loading {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            z-index: 1000;
+        }
+        
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #27ae60;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .three-d-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .three-d-control-btn {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .three-d-control-btn:hover {
+            background-color: #f8f9fa;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1><i class="fas fa-leaf"></i> Redecorează apartamentul</h1>
-            <p class="tagline">Minimalist cu multe plante</p>
-            <p class="subtitle">Încarcă planul camerelor și creează un spațiu minimalist plin de plante pentru o atmosferă liniștită și naturală</p>
+            <p class="tagline">Minimalist cu multe plante + <span class="three-d-highlight">Vizualizare 3D</span></p>
+            <p class="subtitle">Încarcă planul camerelor și creează un spațiu minimalist plin de plante. <span class="ai-highlight">Nou:</span> Vizualizează designul în 3D!</p>
         </header>
         
         <div class="stats">
@@ -484,6 +649,10 @@
             <div class="stat-item">
                 <div class="stat-number" id="furnitureRatio">0:0</div>
                 <div class="stat-label">Raport plante/mobile</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="threeDModels">0</div>
+                <div class="stat-label">Obiecte 3D</div>
             </div>
         </div>
         
@@ -504,6 +673,24 @@
                 <div class="room-preview" id="roomPreview">
                     <h3>Plan încărcat:</h3>
                     <img id="previewImage" src="" alt="Room plan">
+                </div>
+                
+                <div class="ai-suggestions">
+                    <h3><i class="fas fa-robot"></i> Sugestii AI pentru plante</h3>
+                    <div class="ai-suggestions-list">
+                        <div class="ai-suggestion-btn" id="aiLowLight">
+                            <i class="fas fa-moon"></i> Plante pentru lumină redusă
+                        </div>
+                        <div class="ai-suggestion-btn" id="aiPetFriendly">
+                            <i class="fas fa-paw"></i> Plante sigure pentru animale
+                        </div>
+                        <div class="ai-suggestion-btn" id="aiAirPurifying">
+                            <i class="fas fa-wind"></i> Plante care purifică aerul
+                        </div>
+                        <div class="ai-suggestion-btn" id="aiEasyCare">
+                            <i class="fas fa-tint-slash"></i> Plante cu întreținere ușoară
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="style-selection">
@@ -630,16 +817,38 @@
             
             <section class="design-section">
                 <h2 class="section-title"><i class="fas fa-paint-brush"></i> 4. Zone de decorare minimalistă</h2>
-                <div class="design-area empty" id="designArea">
-                    <img class="room-background" id="roomBackground" src="" alt="Room background">
+                
+                <div class="view-toggle">
+                    <div class="view-btn active" id="view2DBtn">
+                        <i class="fas fa-border-all"></i> Vizualizare 2D
+                    </div>
+                    <div class="view-btn" id="view3DBtn">
+                        <i class="fas fa-cube"></i> Vizualizare 3D
+                    </div>
+                </div>
+                
+                <div class="design-area-container">
+                    <div class="design-area empty" id="designArea">
+                        <img class="room-background" id="roomBackground" src="" alt="Room background">
+                    </div>
+                    
+                    <div id="view3DContainer"></div>
+                    
+                    <div class="loading" id="loading3D">
+                        <div class="loading-spinner"></div>
+                        <p>Se încarcă vizualizarea 3D...</p>
+                    </div>
                 </div>
                 
                 <div class="controls">
                     <button class="btn btn-secondary" id="clearBtn">
                         <i class="fas fa-trash-alt"></i> Șterge tot
                     </button>
+                    <button class="btn btn-info" id="toggle3DBtn">
+                        <i class="fas fa-cube"></i> Generează 3D
+                    </button>
                     <button class="btn btn-success" id="saveBtn">
-                        <i class="fas fa-save"></i> Salvează designul minimalist
+                        <i class="fas fa-save"></i> Salvează designul
                     </button>
                 </div>
             </section>
@@ -649,18 +858,18 @@
             <h3><i class="fas fa-info-circle"></i> Cum creezi un spațiu minimalist cu multe plante:</h3>
             <ol>
                 <li>Încarcă planul camerei tale</li>
-                <li>Alege un stil <span class="plant-highlight">minimalist</span> sau <span class="plant-highlight">Scandinavian</span> (sunt perfecte pentru plante)</li>
-                <li>Folosește mai mult <span class="plant-highlight">plante</span> și mai puțin mobilier</li>
-                <li>Folosește butoanele rapide pentru a adăuga mai multe plante deodată</li>
-                <li>Trage plantele în zona de decorare pentru a crea un spațiu verde și liniștit</li>
-                <li>Adaugă doar mobilierul <span class="plant-highlight">esențial</span> (un pat, un scaun, o masă mică)</li>
-                <li>Salvează designul când ai un raport optim între plante și mobilier</li>
+                <li>Folosește <span class="ai-highlight">sugestiile AI</span> pentru plante potrivite</li>
+                <li>Alege un stil minimalist și folosește mai mult <span class="plant-highlight">plante</span></li>
+                <li>Trage plantele în zona de decorare</li>
+                <li>Apasă <span class="three-d-highlight">"Generează 3D"</span> pentru a vedea designul în 3D</li>
+                <li>Comută între vizualizările 2D și 3D pentru a vedea designul din diferite unghiuri</li>
+                <li>Salvează designul când ești mulțumit</li>
             </ol>
             <p style="margin-top: 10px;"><strong>Țintă ideală:</strong> cel puțin 2 plante pentru fiecare mobilă esențială.</p>
         </div>
         
         <footer>
-            <p>Redecorează apartamentul - Minimalist cu Plante &copy; 2023 | Spații verzi și liniștite cu mobilier minimal</p>
+            <p>Redecorează apartamentul - Minimalist cu Plante &copy; 2023 | <span class="three-d-highlight">Vizualizare 3D inclusă gratuit</span></p>
         </footer>
     </div>
 
@@ -678,12 +887,24 @@
             const furnitureItems = document.querySelectorAll('.furniture-item');
             const clearBtn = document.getElementById('clearBtn');
             const saveBtn = document.getElementById('saveBtn');
+            const toggle3DBtn = document.getElementById('toggle3DBtn');
+            const view2DBtn = document.getElementById('view2DBtn');
+            const view3DBtn = document.getElementById('view3DBtn');
+            const view3DContainer = document.getElementById('view3DContainer');
+            const loading3D = document.getElementById('loading3D');
             const totalPlantsElement = document.getElementById('totalPlants');
             const totalFurnitureElement = document.getElementById('totalFurniture');
             const furnitureRatioElement = document.getElementById('furnitureRatio');
+            const threeDModelsElement = document.getElementById('threeDModels');
             const addPlantGroupBtn = document.getElementById('addPlantGroup');
             const addPlantWallBtn = document.getElementById('addPlantWall');
             const addPlantCornerBtn = document.getElementById('addPlantCorner');
+            
+            // AI suggestion buttons
+            const aiLowLightBtn = document.getElementById('aiLowLight');
+            const aiPetFriendlyBtn = document.getElementById('aiPetFriendly');
+            const aiAirPurifyingBtn = document.getElementById('aiAirPurifying');
+            const aiEasyCareBtn = document.getElementById('aiEasyCare');
             
             // App state
             let selectedStyle = 'minimalist';
@@ -691,6 +912,12 @@
             let furnitureCounter = 0;
             let plantCount = 0;
             let essentialCount = 0;
+            let threeDModelsCount = 0;
+            let threeDScene = null;
+            let threeDCamera = null;
+            let threeDRenderer = null;
+            let threeDObjects = [];
+            let is3DViewActive = false;
             
             // Style color mapping
             const styleColors = {
@@ -706,6 +933,34 @@
                 scandinavian: 'Scandinavian',
                 japanese: 'Japonez',
                 bohemian: 'Bohemian Green'
+            };
+            
+            // AI plant suggestions
+            const aiSuggestions = {
+                lowLight: [
+                    { type: 'plant-medium', icon: 'fas fa-leaf', name: 'Liriop' },
+                    { type: 'plant-small', icon: 'fas fa-spa', name: 'Pothos' },
+                    { type: 'plant-large', icon: 'fas fa-seedling', name: 'Dracena' },
+                    { type: 'succulent', icon: 'fas fa-pagelines', name: 'Sansevieria' }
+                ],
+                petFriendly: [
+                    { type: 'plant-medium', icon: 'fas fa-leaf', name: 'Calathea' },
+                    { type: 'plant-small', icon: 'fas fa-spa', name: 'Pilea' },
+                    { type: 'plant-hanging', icon: 'fas fa-tree', name: 'Cățelușa' },
+                    { type: 'plant-large', icon: 'fas fa-seedling', name: 'Palmier' }
+                ],
+                airPurifying: [
+                    { type: 'plant-large', icon: 'fas fa-seedling', name: 'Ficus' },
+                    { type: 'plant-medium', icon: 'fas fa-leaf', name: 'Liriop' },
+                    { type: 'plant-small', icon: 'fas fa-spa', name: 'Spider Plant' },
+                    { type: 'plant-hanging', icon: 'fas fa-tree', name: 'Iedera' }
+                ],
+                easyCare: [
+                    { type: 'succulent', icon: 'fas fa-pagelines', name: 'Succulente' },
+                    { type: 'plant-small', icon: 'fas fa-spa', name: 'ZZ Plant' },
+                    { type: 'plant-medium', icon: 'fas fa-leaf', name: 'Aloe Vera' },
+                    { type: 'plant-hanging', icon: 'fas fa-tree', name: 'Suculentă agățată' }
+                ]
             };
             
             // Initialize the app
@@ -752,11 +1007,22 @@
                 // Control buttons
                 clearBtn.addEventListener('click', clearAllFurniture);
                 saveBtn.addEventListener('click', saveDesign);
+                toggle3DBtn.addEventListener('click', generate3DView);
+                
+                // View toggle buttons
+                view2DBtn.addEventListener('click', () => switchView('2D'));
+                view3DBtn.addEventListener('click', () => switchView('3D'));
                 
                 // Quick add plant buttons
                 addPlantGroupBtn.addEventListener('click', () => addPlantGroup());
                 addPlantWallBtn.addEventListener('click', () => addPlantWall());
                 addPlantCornerBtn.addEventListener('click', () => addPlantCorner());
+                
+                // AI suggestion buttons
+                aiLowLightBtn.addEventListener('click', () => applyAISuggestion('lowLight'));
+                aiPetFriendlyBtn.addEventListener('click', () => applyAISuggestion('petFriendly'));
+                aiAirPurifyingBtn.addEventListener('click', () => applyAISuggestion('airPurifying'));
+                aiEasyCareBtn.addEventListener('click', () => applyAISuggestion('easyCare'));
             }
             
             // Handle room image upload
@@ -840,6 +1106,59 @@
                 });
             }
             
+            // Apply AI suggestion
+            function applyAISuggestion(suggestionType) {
+                if (designArea.classList.contains('empty')) {
+                    alert('Te rog încarcă mai întâi un plan al camerei.');
+                    return;
+                }
+                
+                const suggestions = aiSuggestions[suggestionType];
+                const rect = designArea.getBoundingClientRect();
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                // Clear existing plants first
+                const existingPlants = document.querySelectorAll('.furniture-placed[data-category="plants"]');
+                existingPlants.forEach(plant => {
+                    if (plant.getAttribute('data-category') === 'plants') {
+                        plant.remove();
+                    }
+                });
+                
+                // Reset plant count
+                plantCount = 0;
+                
+                // Add suggested plants
+                suggestions.forEach((plant, index) => {
+                    setTimeout(() => {
+                        const x = centerX - 100 + (index % 2) * 80;
+                        const y = centerY - 50 + Math.floor(index / 2) * 80;
+                        
+                        selectedFurniture = {
+                            type: plant.type,
+                            icon: plant.icon,
+                            color: styleColors[selectedStyle],
+                            category: 'plants',
+                            name: plant.name
+                        };
+                        
+                        placeFurniture(x, y);
+                    }, index * 300);
+                });
+                
+                // Show confirmation
+                let suggestionName = '';
+                switch(suggestionType) {
+                    case 'lowLight': suggestionName = 'pentru lumină redusă'; break;
+                    case 'petFriendly': suggestionName = 'sigure pentru animale'; break;
+                    case 'airPurifying': suggestionName = 'care purifică aerul'; break;
+                    case 'easyCare': suggestionName = 'cu întreținere ușoară'; break;
+                }
+                
+                alert(`Am adăugat plante ${suggestionName}. Aceste plante sunt ideale pentru un spațiu minimalist!`);
+            }
+            
             // Handle furniture selection
             function handleFurnitureSelection(event) {
                 event.preventDefault();
@@ -919,7 +1238,7 @@
                 
                 furniture.innerHTML = `
                     <div class="furniture-icon"><i class="${selectedFurniture.icon}"></i></div>
-                    <div class="furniture-name">${selectedFurniture.type}</div>
+                    <div class="furniture-name">${selectedFurniture.name || selectedFurniture.type}</div>
                 `;
                 
                 // Make furniture draggable
@@ -1019,6 +1338,7 @@
                 totalPlantsElement.textContent = plantCount;
                 totalFurnitureElement.textContent = totalFurniture;
                 furnitureRatioElement.textContent = ratio;
+                threeDModelsElement.textContent = threeDModelsCount;
                 
                 // Visual feedback for good plant-to-furniture ratio
                 if (plantCount >= essentialCount * 2 && essentialCount > 0) {
@@ -1138,7 +1458,352 @@
                     // Reset counters
                     plantCount = 0;
                     essentialCount = 0;
+                    threeDModelsCount = 0;
+                    
+                    // Clear 3D scene if exists
+                    if (threeDScene) {
+                        threeDObjects.forEach(obj => {
+                            threeDScene.remove(obj);
+                        });
+                        threeDObjects = [];
+                    }
+                    
                     updateStats();
+                }
+            }
+            
+            // Switch between 2D and 3D views
+            function switchView(viewType) {
+                if (viewType === '2D') {
+                    designArea.style.display = 'block';
+                    view3DContainer.style.display = 'none';
+                    view2DBtn.classList.add('active');
+                    view3DBtn.classList.remove('active');
+                    is3DViewActive = false;
+                } else if (viewType === '3D') {
+                    if (threeDScene === null) {
+                        alert('Mai întâi generează vizualizarea 3D folosind butonul "Generează 3D".');
+                        view2DBtn.classList.add('active');
+                        view3DBtn.classList.remove('active');
+                        return;
+                    }
+                    
+                    designArea.style.display = 'none';
+                    view3DContainer.style.display = 'block';
+                    view2DBtn.classList.remove('active');
+                    view3DBtn.classList.add('active');
+                    is3DViewActive = true;
+                }
+            }
+            
+            // Generate 3D view from current design
+            function generate3DView() {
+                if (designArea.classList.contains('empty')) {
+                    alert('Te rog încarcă un plan al camerei înainte de a genera vizualizarea 3D.');
+                    return;
+                }
+                
+                const placedFurniture = document.querySelectorAll('.furniture-placed');
+                
+                if (placedFurniture.length === 0) {
+                    alert('Adaugă cel puțin un mobilier în cameră înainte de a genera vizualizarea 3D.');
+                    return;
+                }
+                
+                // Show loading
+                loading3D.style.display = 'block';
+                
+                // Initialize 3D scene if not already initialized
+                if (threeDScene === null) {
+                    init3DScene();
+                } else {
+                    // Clear existing 3D objects
+                    threeDObjects.forEach(obj => {
+                        threeDScene.remove(obj);
+                    });
+                    threeDObjects = [];
+                }
+                
+                // Create 3D objects for each furniture piece
+                setTimeout(() => {
+                    placedFurniture.forEach((furniture, index) => {
+                        const type = furniture.getAttribute('data-type');
+                        const category = furniture.getAttribute('data-category');
+                        
+                        create3DObject(type, category, index);
+                    });
+                    
+                    // Update 3D models count
+                    threeDModelsCount = placedFurniture.length;
+                    updateStats();
+                    
+                    // Hide loading and switch to 3D view
+                    loading3D.style.display = 'none';
+                    
+                    // Switch to 3D view
+                    switchView('3D');
+                    
+                    alert(`Vizualizarea 3D a fost generată cu succes! ${threeDModelsCount} obiecte au fost create.`);
+                }, 1500);
+            }
+            
+            // Initialize 3D scene
+            function init3DScene() {
+                // Get container dimensions
+                const width = view3DContainer.clientWidth;
+                const height = 500; // Fixed height
+                
+                // Create scene
+                threeDScene = new THREE.Scene();
+                threeDScene.background = new THREE.Color(0xf0f0f0);
+                
+                // Create camera
+                threeDCamera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+                threeDCamera.position.set(10, 8, 12);
+                threeDCamera.lookAt(0, 0, 0);
+                
+                // Create renderer
+                threeDRenderer = new THREE.WebGLRenderer({ antialias: true });
+                threeDRenderer.setSize(width, height);
+                threeDRenderer.shadowMap.enabled = true;
+                threeDRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                
+                // Clear previous content
+                view3DContainer.innerHTML = '';
+                view3DContainer.appendChild(threeDRenderer.domElement);
+                
+                // Add lights
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+                threeDScene.add(ambientLight);
+                
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                directionalLight.position.set(10, 20, 5);
+                directionalLight.castShadow = true;
+                directionalLight.shadow.mapSize.width = 2048;
+                directionalLight.shadow.mapSize.height = 2048;
+                threeDScene.add(directionalLight);
+                
+                // Add floor
+                const floorGeometry = new THREE.PlaneGeometry(20, 20);
+                const floorMaterial = new THREE.MeshPhongMaterial({ 
+                    color: 0xeeeeee,
+                    side: THREE.DoubleSide
+                });
+                const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+                floor.rotation.x = Math.PI / 2;
+                floor.position.y = -0.5;
+                floor.receiveShadow = true;
+                threeDScene.add(floor);
+                
+                // Add grid helper
+                const gridHelper = new THREE.GridHelper(20, 20, 0xcccccc, 0xcccccc);
+                gridHelper.position.y = -0.49;
+                threeDScene.add(gridHelper);
+                
+                // Add walls (simple room)
+                const wallMaterial = new THREE.MeshPhongMaterial({ 
+                    color: 0xf5f5f5,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                
+                // Back wall
+                const backWall = new THREE.Mesh(
+                    new THREE.PlaneGeometry(20, 10),
+                    wallMaterial
+                );
+                backWall.position.z = -10;
+                backWall.position.y = 4.5;
+                threeDScene.add(backWall);
+                
+                // Side walls
+                const leftWall = new THREE.Mesh(
+                    new THREE.PlaneGeometry(20, 10),
+                    wallMaterial
+                );
+                leftWall.rotation.y = Math.PI / 2;
+                leftWall.position.x = -10;
+                leftWall.position.y = 4.5;
+                threeDScene.add(leftWall);
+                
+                const rightWall = new THREE.Mesh(
+                    new THREE.PlaneGeometry(20, 10),
+                    wallMaterial
+                );
+                rightWall.rotation.y = -Math.PI / 2;
+                rightWall.position.x = 10;
+                rightWall.position.y = 4.5;
+                threeDScene.add(rightWall);
+                
+                // Add 3D controls UI
+                add3DControls();
+                
+                // Start animation
+                animate3D();
+            }
+            
+            // Create 3D object based on furniture type
+            function create3DObject(type, category, index) {
+                let object;
+                let color;
+                
+                // Set color based on category
+                if (category === 'plants') {
+                    color = 0x27ae60; // Green for plants
+                } else if (category === 'essential') {
+                    color = 0x8b4513; // Brown for essential furniture
+                } else {
+                    color = 0x3498db; // Blue for decor
+                }
+                
+                // Create different 3D objects based on type
+                switch(type) {
+                    case 'plant-large':
+                        const plantGeometry = new THREE.ConeGeometry(1, 3, 8);
+                        const plantMaterial = new THREE.MeshPhongMaterial({ color: color });
+                        object = new THREE.Mesh(plantGeometry, plantMaterial);
+                        object.position.set(
+                            (index % 5) * 3 - 6,
+                            1.5,
+                            Math.floor(index / 5) * 3 - 6
+                        );
+                        break;
+                        
+                    case 'plant-medium':
+                        const mediumPlantGeometry = new THREE.ConeGeometry(0.7, 2, 6);
+                        const mediumPlantMaterial = new THREE.MeshPhongMaterial({ color: color });
+                        object = new THREE.Mesh(mediumPlantGeometry, mediumPlantMaterial);
+                        object.position.set(
+                            (index % 5) * 3 - 6,
+                            1,
+                            Math.floor(index / 5) * 3 - 6
+                        );
+                        break;
+                        
+                    case 'plant-small':
+                        const smallPlantGeometry = new THREE.ConeGeometry(0.5, 1.5, 6);
+                        const smallPlantMaterial = new THREE.MeshPhongMaterial({ color: color });
+                        object = new THREE.Mesh(smallPlantGeometry, smallPlantMaterial);
+                        object.position.set(
+                            (index % 5) * 3 - 6,
+                            0.75,
+                            Math.floor(index / 5) * 3 - 6
+                        );
+                        break;
+                        
+                    case 'sofa':
+                    case 'bed':
+                        const sofaGeometry = new THREE.BoxGeometry(3, 1, 1.5);
+                        const sofaMaterial = new THREE.MeshPhongMaterial({ color: color });
+                        object = new THREE.Mesh(sofaGeometry, sofaMaterial);
+                        object.position.set(
+                            (index % 5) * 3 - 6,
+                            0.5,
+                            Math.floor(index / 5) * 3 - 6
+                        );
+                        break;
+                        
+                    case 'table':
+                        const tableGeometry = new THREE.BoxGeometry(1.5, 1, 1.5);
+                        const tableMaterial = new THREE.MeshPhongMaterial({ color: color });
+                        object = new THREE.Mesh(tableGeometry, tableMaterial);
+                        object.position.set(
+                            (index % 5) * 3 - 6,
+                            0.5,
+                            Math.floor(index / 5) * 3 - 6
+                        );
+                        break;
+                        
+                    default:
+                        // Default cube for other items
+                        const defaultGeometry = new THREE.BoxGeometry(1, 1, 1);
+                        const defaultMaterial = new THREE.MeshPhongMaterial({ color: color });
+                        object = new THREE.Mesh(defaultGeometry, defaultMaterial);
+                        object.position.set(
+                            (index % 5) * 3 - 6,
+                            0.5,
+                            Math.floor(index / 5) * 3 - 6
+                        );
+                }
+                
+                // Enable shadows
+                object.castShadow = true;
+                object.receiveShadow = true;
+                
+                // Add to scene and objects array
+                threeDScene.add(object);
+                threeDObjects.push(object);
+            }
+            
+            // Add 3D controls
+            function add3DControls() {
+                const controlsDiv = document.createElement('div');
+                controlsDiv.className = 'three-d-controls';
+                
+                // Rotate left button
+                const rotateLeftBtn = document.createElement('div');
+                rotateLeftBtn.className = 'three-d-control-btn';
+                rotateLeftBtn.innerHTML = '<i class="fas fa-undo"></i>';
+                rotateLeftBtn.title = 'Rotește la stânga';
+                rotateLeftBtn.addEventListener('click', () => {
+                    threeDScene.rotation.y += 0.2;
+                });
+                
+                // Rotate right button
+                const rotateRightBtn = document.createElement('div');
+                rotateRightBtn.className = 'three-d-control-btn';
+                rotateRightBtn.innerHTML = '<i class="fas fa-redo"></i>';
+                rotateRightBtn.title = 'Rotește la dreapta';
+                rotateRightBtn.addEventListener('click', () => {
+                    threeDScene.rotation.y -= 0.2;
+                });
+                
+                // Zoom in button
+                const zoomInBtn = document.createElement('div');
+                zoomInBtn.className = 'three-d-control-btn';
+                zoomInBtn.innerHTML = '<i class="fas fa-search-plus"></i>';
+                zoomInBtn.title = 'Zoom in';
+                zoomInBtn.addEventListener('click', () => {
+                    threeDCamera.position.multiplyScalar(0.9);
+                });
+                
+                // Zoom out button
+                const zoomOutBtn = document.createElement('div');
+                zoomOutBtn.className = 'three-d-control-btn';
+                zoomOutBtn.innerHTML = '<i class="fas fa-search-minus"></i>';
+                zoomOutBtn.title = 'Zoom out';
+                zoomOutBtn.addEventListener('click', () => {
+                    threeDCamera.position.multiplyScalar(1.1);
+                });
+                
+                // Reset view button
+                const resetBtn = document.createElement('div');
+                resetBtn.className = 'three-d-control-btn';
+                resetBtn.innerHTML = '<i class="fas fa-home"></i>';
+                resetBtn.title = 'Resetare vizualizare';
+                resetBtn.addEventListener('click', () => {
+                    threeDCamera.position.set(10, 8, 12);
+                    threeDScene.rotation.y = 0;
+                });
+                
+                // Add buttons to controls div
+                controlsDiv.appendChild(rotateLeftBtn);
+                controlsDiv.appendChild(rotateRightBtn);
+                controlsDiv.appendChild(zoomInBtn);
+                controlsDiv.appendChild(zoomOutBtn);
+                controlsDiv.appendChild(resetBtn);
+                
+                // Add to container
+                view3DContainer.appendChild(controlsDiv);
+            }
+            
+            // Animate 3D scene
+            function animate3D() {
+                requestAnimationFrame(animate3D);
+                
+                // Only render if 3D view is active
+                if (is3DViewActive && threeDRenderer && threeDScene && threeDCamera) {
+                    threeDRenderer.render(threeDScene, threeDCamera);
                 }
             }
             
@@ -1165,7 +1830,9 @@
                 
                 // In a real app, this would save to a server or generate an image
                 const styleName = styleNames[selectedStyle];
-                alert(`Designul tău minimalist în stil ${styleName} cu ${plantCount} plante a fost salvat! Ai creat un spațiu verde și liniștit.`);
+                const has3D = threeDScene !== null ? 'și vizualizare 3D' : '';
+                
+                alert(`Designul tău minimalist în stil ${styleName} cu ${plantCount} plante a fost salvat! ${has3D}`);
                 
                 // Log design details to console (for demo purposes)
                 console.log('Design minimalist salvat:');
@@ -1174,6 +1841,7 @@
                 console.log('- Mobile esențiale:', essentialCount);
                 console.log('- Raport plante/mobile:', plantCount + ':' + essentialCount);
                 console.log('- Total obiecte:', placedFurniture.length);
+                console.log('- Obiecte 3D generate:', threeDModelsCount);
             }
             
             // Initialize the app
