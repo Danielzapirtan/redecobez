@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redecorează apartamentul</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .app-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .upload-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .design-section {
+            flex: 2;
+            min-width: 500px;
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .upload-area {
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: #f8fafc;
+        }
+        
+        .upload-area:hover {
+            background-color: #e8f4fc;
+            border-color: #2980b9;
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            font-size: 1.1rem;
+            color: #555;
+        }
+        
+        .upload-text small {
+            display: block;
+            margin-top: 10px;
+            color: #888;
+        }
+        
+        #roomImage {
+            display: none;
+        }
+        
+        .room-preview {
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .room-preview img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .style-selection {
+            margin-top: 25px;
+        }
+        
+        .style-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .style-option {
+            border: 2px solid #eee;
+            border-radius: 8px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .style-option:hover {
+            border-color: #3498db;
+            transform: translateY(-3px);
+        }
+        
+        .style-option.active {
+            border-color: #2ecc71;
+            background-color: #f0f9f4;
+        }
+        
+        .style-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        
+        .style-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        
+        .furniture-selection {
+            margin-top: 25px;
+        }
+        
+        .furniture-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .furniture-item {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            transition: all 0.3s;
+            border: 2px solid #eee;
+            background-color: #f8f9fa;
+            position: relative;
+        }
+        
+        .furniture-item:hover {
+            border-color: #3498db;
+            transform: scale(1.05);
+        }
+        
+        .furniture-icon {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+        
+        .furniture-name {
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        
+        .design-area {
+            flex-grow: 1;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+            background-color: #f9f9f9;
+            min-height: 500px;
+        }
+        
+        .design-area.empty::before {
+            content: "Încarcă un plan al camerei și trage mobilierul aici";
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #aaa;
+            font-size: 1.1rem;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .room-background {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .furniture-placed {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: move;
+            border-radius: 5px;
+            transition: transform 0.2s;
+            z-index: 10;
+        }
+        
+        .furniture-placed:hover {
+            transform: scale(1.05);
+            z-index: 100;
+        }
+        
+        .furniture-placed .furniture-icon {
+            font-size: 1.8rem;
+        }
+        
+        .furniture-placed .furniture-name {
+            font-size: 0.75rem;
+            margin-top: 5px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #d0d0d0;
+        }
+        
+        .btn-success {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .instructions {
+            margin-top: 30px;
+            background-color: #f0f7ff;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .instructions h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            color: #7f8c8d;
+            border-top: 1px solid #e0e0e0;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 1100px) {
+            .app-container {
+                flex-direction: column;
+            }
+        }
+        
+        .color-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        .selected-style {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-paint-roller"></i> Redecorează apartamentul</h1>
+            <p class="subtitle">Încarcă planurile camerelor și redecorează-le cu mobilier în stilul tău preferat</p>
+        </header>
+        
+        <div class="app-container">
+            <section class="upload-section">
+                <h2 class="section-title">1. Încarcă planul camerei</h2>
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">
+                        Click pentru a încărca o imagine cu planul camerei
+                        <small>Formate acceptate: JPG, PNG, GIF (max. 5MB)</small>
+                    </div>
+                    <input type="file" id="roomImage" accept="image/*">
+                </div>
+                
+                <div class="room-preview" id="roomPreview">
+                    <h3>Plan încărcat:</h3>
+                    <img id="previewImage" src="" alt="Room plan">
+                </div>
+                
+                <div class="style-selection">
+                    <h2 class="section-title">2. Alege un stil de decorare</h2>
+                    <div class="style-options">
+                        <div class="style-option" data-style="modern">
+                            <div class="style-icon"><i class="fas fa-cube"></i></div>
+                            <div class="style-name">Modern</div>
+                        </div>
+                        <div class="style-option" data-style="minimalist">
+                            <div class="style-icon"><i class="fas fa-border-style"></i></div>
+                            <div class="style-name">Minimalist</div>
+                        </div>
+                        <div class="style-option" data-style="rustic">
+                            <div class="style-icon"><i class="fas fa-tree"></i></div>
+                            <div class="style-name">Rustic</div>
+                        </div>
+                        <div class="style-option" data-style="industrial">
+                            <div class="style-icon"><i class="fas fa-industry"></i></div>
+                            <div class="style-name">Industrial</div>
+                        </div>
+                        <div class="style-option" data-style="scandinavian">
+                            <div class="style-icon"><i class="fas fa-snowflake"></i></div>
+                            <div class="style-name">Scandinavian</div>
+                        </div>
+                        <div class="style-option" data-style="bohemian">
+                            <div class="style-icon"><i class="fas fa-feather-alt"></i></div>
+                            <div class="style-name">Bohemian</div>
+                        </div>
+                    </div>
+                    
+                    <div class="selected-style" id="selectedStyle">
+                        <strong>Stil selectat:</strong> <span id="currentStyle">Niciun stil selectat</span>
+                    </div>
+                </div>
+                
+                <div class="furniture-selection">
+                    <h2 class="section-title">3. Selectează mobilier</h2>
+                    <div class="furniture-items">
+                        <div class="furniture-item" data-type="sofa" data-icon="fas fa-couch">
+                            <div class="furniture-icon"><i class="fas fa-couch"></i></div>
+                            <div class="furniture-name">Scaun</div>
+                        </div>
+                        <div class="furniture-item" data-type="bed" data-icon="fas fa-bed">
+                            <div class="furniture-icon"><i class="fas fa-bed"></i></div>
+                            <div class="furniture-name">Pat</div>
+                        </div>
+                        <div class="furniture-item" data-type="table" data-icon="fas fa-utensils">
+                            <div class="furniture-icon"><i class="fas fa-utensils"></i></div>
+                            <div class="furniture-name">Masă</div>
+                        </div>
+                        <div class="furniture-item" data-type="chair" data-icon="fas fa-chair">
+                            <div class="furniture-icon"><i class="fas fa-chair"></i></div>
+                            <div class="furniture-name">Scaun</div>
+                        </div>
+                        <div class="furniture-item" data-type="desk" data-icon="fas fa-desktop">
+                            <div class="furniture-icon"><i class="fas fa-desktop"></i></div>
+                            <div class="furniture-name">Birou</div>
+                        </div>
+                        <div class="furniture-item" data-type="wardrobe" data-icon="fas fa-archive">
+                            <div class="furniture-icon"><i class="fas fa-archive"></i></div>
+                            <div class="furniture-name">Dulap</div>
+                        </div>
+                        <div class="furniture-item" data-type="lamp" data-icon="fas fa-lightbulb">
+                            <div class="furniture-icon"><i class="fas fa-lightbulb"></i></div>
+                            <div class="furniture-name">Lampă</div>
+                        </div>
+                        <div class="furniture-item" data-type="plant" data-icon="fas fa-leaf">
+                            <div class="furniture-icon"><i class="fas fa-leaf"></i></div>
+                            <div class="furniture-name">Plantă</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="design-section">
+                <h2 class="section-title">4. Zone de decorare</h2>
+                <div class="design-area empty" id="designArea">
+                    <img class="room-background" id="roomBackground" src="" alt="Room background">
+                </div>
+                
+                <div class="controls">
+                    <button class="btn btn-secondary" id="clearBtn">
+                        <i class="fas fa-trash-alt"></i> Șterge tot mobilierul
+                    </button>
+                    <button class="btn btn-success" id="saveBtn">
+                        <i class="fas fa-save"></i> Salvează designul
+                    </button>
+                </div>
+            </section>
+        </div>
+        
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> Cum funcționează aplicația:</h3>
+            <ol>
+                <li>Încarcă o imagine cu planul camerei tale (schemă, diagramă sau fotografie)</li>
+                <li>Alege un stil de decorare dintre cele disponibile (Modern, Minimalist, Rustic, etc.)</li>
+                <li>Selectează mobilierul pe care dorești să-l plasezi în cameră</li>
+                <li>Trage mobilierul în zona de decorare și plasează-l unde dorești</li>
+                <li>Poți muta mobilierul după plasare pentru a experimenta cu diferite aranjamente</li>
+                <li>Salvează designul final când ești mulțumit de rezultat</li>
+            </ol>
+        </div>
+        
+        <footer>
+            <p>Redecorează apartamentul &copy; 2023 | O aplicație pentru decorarea virtuală a spațiilor</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const uploadArea = document.getElementById('uploadArea');
+            const roomImageInput = document.getElementById('roomImage');
+            const roomPreview = document.getElementById('roomPreview');
+            const previewImage = document.getElementById('previewImage');
+            const roomBackground = document.getElementById('roomBackground');
+            const designArea = document.getElementById('designArea');
+            const styleOptions = document.querySelectorAll('.style-option');
+            const currentStyleElement = document.getElementById('currentStyle');
+            const furnitureItems = document.querySelectorAll('.furniture-item');
+            const clearBtn = document.getElementById('clearBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const selectedStyleDiv = document.getElementById('selectedStyle');
+            
+            // App state
+            let selectedStyle = null;
+            let selectedFurniture = null;
+            let furnitureCounter = 0;
+            
+            // Style color mapping
+            const styleColors = {
+                modern: '#3498db',
+                minimalist: '#95a5a6',
+                rustic: '#d35400',
+                industrial: '#34495e',
+                scandinavian: '#ecf0f1',
+                bohemian: '#9b59b6'
+            };
+            
+            // Style display names
+            const styleNames = {
+                modern: 'Modern',
+                minimalist: 'Minimalist',
+                rustic: 'Rustic',
+                industrial: 'Industrial',
+                scandinavian: 'Scandinavian',
+                bohemian: 'Bohemian'
+            };
+            
+            // Initialize the app
+            function init() {
+                // Initially hide the selected style indicator
+                selectedStyleDiv.style.display = 'none';
+                
+                // Set up event listeners
+                setupEventListeners();
+            }
+            
+            // Set up all event listeners
+            function setupEventListeners() {
+                // Upload area click event
+                uploadArea.addEventListener('click', () => roomImageInput.click());
+                
+                // Room image upload event
+                roomImageInput.addEventListener('change', handleRoomImageUpload);
+                
+                // Style selection events
+                styleOptions.forEach(option => {
+                    option.addEventListener('click', handleStyleSelection);
+                });
+                
+                // Furniture selection events
+                furnitureItems.forEach(item => {
+                    item.addEventListener('mousedown', handleFurnitureSelection);
+                    item.addEventListener('touchstart', handleFurnitureSelection);
+                });
+                
+                // Design area events
+                designArea.addEventListener('dragover', handleDragOver);
+                designArea.addEventListener('drop', handleDrop);
+                designArea.addEventListener('click', handleDesignAreaClick);
+                
+                // Control buttons
+                clearBtn.addEventListener('click', clearAllFurniture);
+                saveBtn.addEventListener('click', saveDesign);
+            }
+            
+            // Handle room image upload
+            function handleRoomImageUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                // Check file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Fișierul este prea mare. Te rog alege un fișier mai mic de 5MB.');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const imageUrl = e.target.result;
+                    
+                    // Show preview
+                    previewImage.src = imageUrl;
+                    roomPreview.style.display = 'block';
+                    
+                    // Set as background in design area
+                    roomBackground.src = imageUrl;
+                    roomBackground.style.display = 'block';
+                    designArea.classList.remove('empty');
+                    
+                    // Scroll to design area
+                    designArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                };
+                
+                reader.readAsDataURL(file);
+            }
+            
+            // Handle style selection
+            function handleStyleSelection(event) {
+                const styleElement = event.currentTarget;
+                const style = styleElement.getAttribute('data-style');
+                
+                // Remove active class from all style options
+                styleOptions.forEach(option => {
+                    option.classList.remove('active');
+                });
+                
+                // Add active class to selected style
+                styleElement.classList.add('active');
+                
+                // Update selected style
+                selectedStyle = style;
+                
+                // Update the selected style indicator
+                currentStyleElement.innerHTML = `
+                    <span class="color-indicator" style="background-color: ${styleColors[style]}"></span>
+                    ${styleNames[style]}
+                `;
+                selectedStyleDiv.style.display = 'flex';
+                
+                // Update furniture colors based on selected style
+                updateFurnitureColors(style);
+            }
+            
+            // Update furniture colors based on selected style
+            function updateFurnitureColors(style) {
+                furnitureItems.forEach(item => {
+                    const icon = item.querySelector('.furniture-icon i');
+                    icon.style.color = styleColors[style];
+                });
+            }
+            
+            // Handle furniture selection
+            function handleFurnitureSelection(event) {
+                event.preventDefault();
+                
+                const furnitureElement = event.currentTarget;
+                const type = furnitureElement.getAttribute('data-type');
+                const iconClass = furnitureElement.getAttribute('data-icon');
+                
+                selectedFurniture = {
+                    type: type,
+                    icon: iconClass,
+                    color: selectedStyle ? styleColors[selectedStyle] : '#3498db'
+                };
+                
+                // Add visual feedback for selected furniture
+                furnitureItems.forEach(item => {
+                    item.style.borderColor = '#eee';
+                });
+                furnitureElement.style.borderColor = '#2ecc71';
+                
+                // If design area is empty (no room image), show a message
+                if (designArea.classList.contains('empty')) {
+                    alert('Te rog încarcă mai întâi un plan al camerei înainte de a plasa mobilierul.');
+                }
+            }
+            
+            // Handle drag over design area
+            function handleDragOver(event) {
+                event.preventDefault();
+                event.dataTransfer.dropEffect = 'copy';
+            }
+            
+            // Handle drop in design area
+            function handleDrop(event) {
+                event.preventDefault();
+                
+                if (!selectedFurniture) {
+                    alert('Te rog selectează mai întâi un mobilier din lista de mobilier.');
+                    return;
+                }
+                
+                const rect = designArea.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                
+                placeFurniture(x, y);
+            }
+            
+            // Handle click in design area
+            function handleDesignAreaClick(event) {
+                if (!selectedFurniture) return;
+                
+                const rect = designArea.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                
+                // Check if click is within the design area
+                if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+                    placeFurniture(x, y);
+                }
+            }
+            
+            // Place furniture in design area
+            function placeFurniture(x, y) {
+                furnitureCounter++;
+                
+                const furniture = document.createElement('div');
+                furniture.className = 'furniture-placed';
+                furniture.id = `furniture-${furnitureCounter}`;
+                furniture.style.left = `${x}px`;
+                furniture.style.top = `${y}px`;
+                furniture.style.color = selectedFurniture.color;
+                furniture.setAttribute('data-type', selectedFurniture.type);
+                
+                furniture.innerHTML = `
+                    <div class="furniture-icon"><i class="${selectedFurniture.icon}"></i></div>
+                    <div class="furniture-name">${selectedFurniture.type}</div>
+                `;
+                
+                // Make furniture draggable
+                makeDraggable(furniture);
+                
+                // Add to design area
+                designArea.appendChild(furniture);
+            }
+            
+            // Make furniture element draggable
+            function makeDraggable(element) {
+                let isDragging = false;
+                let currentX;
+                let currentY;
+                let initialX;
+                let initialY;
+                let xOffset = 0;
+                let yOffset = 0;
+                
+                element.addEventListener('mousedown', dragStart);
+                element.addEventListener('touchstart', dragStart);
+                
+                function dragStart(e) {
+                    if (e.type === 'touchstart') {
+                        initialX = e.touches[0].clientX - xOffset;
+                        initialY = e.touches[0].clientY - yOffset;
+                    } else {
+                        initialX = e.clientX - xOffset;
+                        initialY = e.clientY - yOffset;
+                    }
+                    
+                    if (e.target === element || element.contains(e.target)) {
+                        isDragging = true;
+                        element.style.cursor = 'grabbing';
+                        element.style.zIndex = '1000';
+                    }
+                    
+                    document.addEventListener('mousemove', drag);
+                    document.addEventListener('touchmove', drag);
+                    document.addEventListener('mouseup', dragEnd);
+                    document.addEventListener('touchend', dragEnd);
+                }
+                
+                function drag(e) {
+                    if (isDragging) {
+                        e.preventDefault();
+                        
+                        if (e.type === 'touchmove') {
+                            currentX = e.touches[0].clientX - initialX;
+                            currentY = e.touches[0].clientY - initialY;
+                        } else {
+                            currentX = e.clientX - initialX;
+                            currentY = e.clientY - initialY;
+                        }
+                        
+                        xOffset = currentX;
+                        yOffset = currentY;
+                        
+                        setTranslate(currentX, currentY, element);
+                    }
+                }
+                
+                function dragEnd() {
+                    initialX = currentX;
+                    initialY = currentY;
+                    
+                    isDragging = false;
+                    element.style.cursor = 'move';
+                    element.style.zIndex = '10';
+                    
+                    document.removeEventListener('mousemove', drag);
+                    document.removeEventListener('touchmove', drag);
+                    document.removeEventListener('mouseup', dragEnd);
+                    document.removeEventListener('touchend', dragEnd);
+                }
+                
+                function setTranslate(xPos, yPos, el) {
+                    el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+                }
+            }
+            
+            // Clear all furniture from design area
+            function clearAllFurniture() {
+                const placedFurniture = document.querySelectorAll('.furniture-placed');
+                
+                if (placedFurniture.length === 0) {
+                    alert('Nu există mobilier de șters.');
+                    return;
+                }
+                
+                if (confirm('Sigur dorești să ștergi tot mobilierul?')) {
+                    placedFurniture.forEach(item => {
+                        item.remove();
+                    });
+                }
+            }
+            
+            // Save design
+            function saveDesign() {
+                if (designArea.classList.contains('empty')) {
+                    alert('Te rog încarcă un plan al camerei înainte de a salva designul.');
+                    return;
+                }
+                
+                const placedFurniture = document.querySelectorAll('.furniture-placed');
+                
+                if (placedFurniture.length === 0) {
+                    alert('Adaugă cel puțin un mobilier în cameră înainte de a salva designul.');
+                    return;
+                }
+                
+                if (!selectedStyle) {
+                    alert('Te rog selectează un stil de decorare înainte de a salva.');
+                    return;
+                }
+                
+                // In a real app, this would save to a server or generate an image
+                // For this demo, we'll just show a success message
+                const styleName = styleNames[selectedStyle];
+                alert(`Designul tău în stil ${styleName} a fost salvat! Într-o aplicație reală, ai putea descărca o imagine sau partaja designul.`);
+                
+                // Log design details to console (for demo purposes)
+                console.log('Design salvat cu următoarele detalii:');
+                console.log('- Stil:', styleName);
+                console.log('- Număr de mobile:', placedFurniture.length);
+                console.log('- Tipuri de mobile:');
+                placedFurniture.forEach(item => {
+                    console.log('  -', item.getAttribute('data-type'));
+                });
+            }
+            
+            // Initialize the app
+            init();
+        });
+    </script>
+</body>
+</html>
