@@ -1555,16 +1555,19 @@
                 
                 // Create scene
                 threeDScene = new THREE.Scene();
-                threeDScene.background = new THREE.Color(0xf0f0f0);
                 
                 // Create camera
                 threeDCamera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
                 threeDCamera.position.set(10, 8, 12);
                 threeDCamera.lookAt(0, 0, 0);
                 
-                // Create renderer
-                threeDRenderer = new THREE.WebGLRenderer({ antialias: true });
+                // Create renderer - ensure alpha is false for solid background
+                threeDRenderer = new THREE.WebGLRenderer({ 
+                    antialias: true,
+                    alpha: false // Important: set to false for solid background
+                });
                 threeDRenderer.setSize(width, height);
+                threeDRenderer.setClearColor(0xf0f0f0, 1); // Set clear color for the renderer
                 threeDRenderer.shadowMap.enabled = true;
                 threeDRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
                 
@@ -1572,20 +1575,25 @@
                 view3DContainer.innerHTML = '';
                 view3DContainer.appendChild(threeDRenderer.domElement);
                 
-                // Add lights
-                const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+                // Add lights - make them stronger initially
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.8); // Increased intensity
                 threeDScene.add(ambientLight);
                 
-                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0); // Increased intensity
                 directionalLight.position.set(10, 20, 5);
                 directionalLight.castShadow = true;
                 directionalLight.shadow.mapSize.width = 2048;
                 directionalLight.shadow.mapSize.height = 2048;
                 threeDScene.add(directionalLight);
                 
-                // Add floor
+                // Add a second light from the opposite side to reduce shadows
+                const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.5);
+                directionalLight2.position.set(-10, 10, -5);
+                threeDScene.add(directionalLight2);
+                
+                // Add floor with less reflective material
                 const floorGeometry = new THREE.PlaneGeometry(20, 20);
-                const floorMaterial = new THREE.MeshPhongMaterial({ 
+                const floorMaterial = new THREE.MeshLambertMaterial({ 
                     color: 0xeeeeee,
                     side: THREE.DoubleSide
                 });
@@ -1600,11 +1608,9 @@
                 gridHelper.position.y = -0.49;
                 threeDScene.add(gridHelper);
                 
-                // Add walls (simple room)
-                const wallMaterial = new THREE.MeshPhongMaterial({ 
-                    color: 0xf5f5f5,
-                    transparent: true,
-                    opacity: 0.8
+                // Add walls with solid color (not transparent)
+                const wallMaterial = new THREE.MeshLambertMaterial({ 
+                    color: 0xf5f5f5
                 });
                 
                 // Back wall
@@ -1635,6 +1641,15 @@
                 rightWall.position.y = 4.5;
                 threeDScene.add(rightWall);
                 
+                // Add ceiling
+                const ceiling = new THREE.Mesh(
+                    new THREE.PlaneGeometry(20, 20),
+                    new THREE.MeshLambertMaterial({ color: 0xf9f9f9 })
+                );
+                ceiling.rotation.x = Math.PI / 2;
+                ceiling.position.y = 9.5;
+                threeDScene.add(ceiling);
+                
                 // Add 3D controls UI
                 add3DControls();
                 
@@ -1660,7 +1675,7 @@
                 switch(type) {
                     case 'plant-large':
                         const plantGeometry = new THREE.ConeGeometry(1, 3, 8);
-                        const plantMaterial = new THREE.MeshPhongMaterial({ color: color });
+                        const plantMaterial = new THREE.MeshLambertMaterial({ color: color });
                         object = new THREE.Mesh(plantGeometry, plantMaterial);
                         object.position.set(
                             (index % 5) * 3 - 6,
@@ -1671,7 +1686,7 @@
                         
                     case 'plant-medium':
                         const mediumPlantGeometry = new THREE.ConeGeometry(0.7, 2, 6);
-                        const mediumPlantMaterial = new THREE.MeshPhongMaterial({ color: color });
+                        const mediumPlantMaterial = new THREE.MeshLambertMaterial({ color: color });
                         object = new THREE.Mesh(mediumPlantGeometry, mediumPlantMaterial);
                         object.position.set(
                             (index % 5) * 3 - 6,
@@ -1682,7 +1697,7 @@
                         
                     case 'plant-small':
                         const smallPlantGeometry = new THREE.ConeGeometry(0.5, 1.5, 6);
-                        const smallPlantMaterial = new THREE.MeshPhongMaterial({ color: color });
+                        const smallPlantMaterial = new THREE.MeshLambertMaterial({ color: color });
                         object = new THREE.Mesh(smallPlantGeometry, smallPlantMaterial);
                         object.position.set(
                             (index % 5) * 3 - 6,
@@ -1691,10 +1706,32 @@
                         );
                         break;
                         
+                    case 'succulent':
+                        const succulentGeometry = new THREE.SphereGeometry(0.8, 8, 6);
+                        const succulentMaterial = new THREE.MeshLambertMaterial({ color: color });
+                        object = new THREE.Mesh(succulentGeometry, succulentMaterial);
+                        object.position.set(
+                            (index % 5) * 3 - 6,
+                            0.8,
+                            Math.floor(index / 5) * 3 - 6
+                        );
+                        break;
+                        
+                    case 'plant-hanging':
+                        const hangingGeometry = new THREE.ConeGeometry(0.6, 2, 6);
+                        const hangingMaterial = new THREE.MeshLambertMaterial({ color: color });
+                        object = new THREE.Mesh(hangingGeometry, hangingMaterial);
+                        object.position.set(
+                            (index % 5) * 3 - 6,
+                            2.5,
+                            Math.floor(index / 5) * 3 - 6
+                        );
+                        break;
+                        
                     case 'sofa':
                     case 'bed':
                         const sofaGeometry = new THREE.BoxGeometry(3, 1, 1.5);
-                        const sofaMaterial = new THREE.MeshPhongMaterial({ color: color });
+                        const sofaMaterial = new THREE.MeshLambertMaterial({ color: color });
                         object = new THREE.Mesh(sofaGeometry, sofaMaterial);
                         object.position.set(
                             (index % 5) * 3 - 6,
@@ -1705,7 +1742,7 @@
                         
                     case 'table':
                         const tableGeometry = new THREE.BoxGeometry(1.5, 1, 1.5);
-                        const tableMaterial = new THREE.MeshPhongMaterial({ color: color });
+                        const tableMaterial = new THREE.MeshLambertMaterial({ color: color });
                         object = new THREE.Mesh(tableGeometry, tableMaterial);
                         object.position.set(
                             (index % 5) * 3 - 6,
@@ -1714,10 +1751,52 @@
                         );
                         break;
                         
+                    case 'chair':
+                        const chairGeometry = new THREE.BoxGeometry(0.8, 1.2, 0.8);
+                        const chairMaterial = new THREE.MeshLambertMaterial({ color: color });
+                        object = new THREE.Mesh(chairGeometry, chairMaterial);
+                        object.position.set(
+                            (index % 5) * 3 - 6,
+                            0.6,
+                            Math.floor(index / 5) * 3 - 6
+                        );
+                        break;
+                        
+                    case 'storage':
+                        const storageGeometry = new THREE.BoxGeometry(1.2, 2, 0.8);
+                        const storageMaterial = new THREE.MeshLambertMaterial({ color: color });
+                        object = new THREE.Mesh(storageGeometry, storageMaterial);
+                        object.position.set(
+                            (index % 5) * 3 - 6,
+                            1,
+                            Math.floor(index / 5) * 3 - 6
+                        );
+                        break;
+                        
+                    case 'lamp':
+                        const lampBaseGeometry = new THREE.CylinderGeometry(0.2, 0.3, 0.3, 8);
+                        const lampBaseMaterial = new THREE.MeshLambertMaterial({ color: color });
+                        const lampBase = new THREE.Mesh(lampBaseGeometry, lampBaseMaterial);
+                        
+                        const lampShadeGeometry = new THREE.ConeGeometry(0.5, 0.8, 8);
+                        const lampShadeMaterial = new THREE.MeshLambertMaterial({ color: 0xf1c40f });
+                        const lampShade = new THREE.Mesh(lampShadeGeometry, lampShadeMaterial);
+                        lampShade.position.y = 0.8;
+                        
+                        object = new THREE.Group();
+                        object.add(lampBase);
+                        object.add(lampShade);
+                        object.position.set(
+                            (index % 5) * 3 - 6,
+                            0.15,
+                            Math.floor(index / 5) * 3 - 6
+                        );
+                        break;
+                        
                     default:
                         // Default cube for other items
                         const defaultGeometry = new THREE.BoxGeometry(1, 1, 1);
-                        const defaultMaterial = new THREE.MeshPhongMaterial({ color: color });
+                        const defaultMaterial = new THREE.MeshLambertMaterial({ color: color });
                         object = new THREE.Mesh(defaultGeometry, defaultMaterial);
                         object.position.set(
                             (index % 5) * 3 - 6,
@@ -1727,8 +1806,17 @@
                 }
                 
                 // Enable shadows
-                object.castShadow = true;
-                object.receiveShadow = true;
+                if (object.isMesh) {
+                    object.castShadow = true;
+                    object.receiveShadow = true;
+                } else if (object.isGroup) {
+                    object.children.forEach(child => {
+                        if (child.isMesh) {
+                            child.castShadow = true;
+                            child.receiveShadow = true;
+                        }
+                    });
+                }
                 
                 // Add to scene and objects array
                 threeDScene.add(object);
