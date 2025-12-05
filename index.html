@@ -2,39 +2,93 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Room View from Sketch</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>3D Room Viewer</title>
     <style>
-        body { margin: 0; overflow: hidden; }
-        canvas { display: block; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            background: #1a1a1a;
+            touch-action: none;
+        }
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 100;
+        }
+        #controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        button:active {
+            background: #45a049;
+        }
     </style>
 </head>
 <body>
+    <div id="canvas-container"></div>
+    <div id="info">
+        <strong>Room Dimensions</strong><br>
+        Total: 5.10m × 3.10m<br>
+        📱 Touch to rotate • Pinch to zoom
+    </div>
+    <div id="controls">
+        <button id="reset">Reset View</button>
+        <button id="toggle">Toggle Roof</button>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/OrbitControls.js"></script>
     <script>
         // Scene setup
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xffffff); // White background for room
-
-        // Camera
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(5, 5, 5); // Initial camera position
-
-        // Renderer
+        scene.background = new THREE.Color(0x2a2a2a);
+        
+        const camera = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+        );
+        
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+        renderer.shadowMap.enabled = true;
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        // Orbit controls for virtual camera browsing
-        const controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.25;
-        controls.screenSpacePanning = false;
-        controls.minDistance = 1;
-        controls.maxDistance = 20;
-
-        // Lighting for semi-realistic look
+        // Lighting
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
         scene.add(ambientLight);
 
@@ -43,102 +97,241 @@
         directionalLight.castShadow = true;
         scene.add(directionalLight);
 
-        // Room dimensions (based on sketch interpretation)
-        // Assuming units in meters, scaled down for 3D (1 unit = 1 meter)
-        // L-shaped room: long wall 3.2m, assume short arm ~2m, height 2.5m
-        const roomLength = 3.2; // Main horizontal
-        const roomWidth = 2.0; // Vertical arm
+        // Room dimensions from sketch (in meters)
+        const roomWidth = 5.10;
+        const roomDepth = 3.10;
         const roomHeight = 2.5;
-        const wallThickness = 0.1;
+        const wallThickness = 0.15;
 
         // Materials
-        const floorMaterial = new THREE.MeshLambertMaterial({ color: 0xdddddd }); // Light gray floor
-        const wallMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff }); // White walls
-        const counterMaterial = new THREE.MeshLambertMaterial({ color: 0x8b4513 }); // Brown wood counter
-        const applianceMaterial = new THREE.MeshLambertMaterial({ color: 0xaaaaaa }); // Gray appliances
+        const wallMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0xe8e8e8,
+            side: THREE.DoubleSide 
+        });
+        const floorMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x8b7355 
+        });
+        const roofMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0xf5f5f5,
+            transparent: true,
+            opacity: 0.8
+        });
+        const furnitureMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x6b4423 
+        });
+        const doorMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x5a3a1a 
+        });
 
-        // Floor (L-shape)
-        const floorGeometry = new THREE.Shape();
-        floorGeometry.moveTo(0, 0);
-        floorGeometry.lineTo(roomLength, 0);
-        floorGeometry.lineTo(roomLength, roomWidth - 1); // L bend
-        floorGeometry.lineTo(roomLength - 1, roomWidth - 1); // Inner cut for L
-        floorGeometry.lineTo(roomLength - 1, roomWidth);
-        floorGeometry.lineTo(0, roomWidth);
-        floorGeometry.lineTo(0, 0);
+        // Create room group
+        const room = new THREE.Group();
 
-        const extrudeSettings = { depth: 0.01, bevelEnabled: false };
-        const floor = new THREE.ExtrudeMesh(new THREE.ExtrudeGeometry(floorGeometry, extrudeSettings), floorMaterial);
-        floor.rotation.x = -Math.PI / 2; // Lay flat
-        floor.position.y = 0;
-        scene.add(floor);
+        // Floor
+        const floor = new THREE.Mesh(
+            new THREE.PlaneGeometry(roomWidth, roomDepth),
+            floorMaterial
+        );
+        floor.rotation.x = -Math.PI / 2;
+        floor.receiveShadow = true;
+        room.add(floor);
 
-        // Walls (simplified as boxes for L-shape)
-        // Back wall (horizontal)
-        const backWall = new THREE.Mesh(new THREE.BoxGeometry(roomLength, roomHeight, wallThickness), wallMaterial);
-        backWall.position.set(roomLength / 2, roomHeight / 2, 0);
-        scene.add(backWall);
+        // Walls
+        // Back wall (biblioteca - library)
+        const backWall = new THREE.Mesh(
+            new THREE.BoxGeometry(roomWidth, roomHeight, wallThickness),
+            wallMaterial
+        );
+        backWall.position.set(0, roomHeight / 2, -roomDepth / 2);
+        backWall.castShadow = true;
+        room.add(backWall);
 
-        // Left wall (vertical full)
-        const leftWall = new THREE.Mesh(new THREE.BoxGeometry(wallThickness, roomHeight, roomWidth), wallMaterial);
-        leftWall.position.set(0, roomHeight / 2, roomWidth / 2);
-        scene.add(leftWall);
+        // Front wall (entrance)
+        const frontWall = new THREE.Mesh(
+            new THREE.BoxGeometry(roomWidth, roomHeight, wallThickness),
+            wallMaterial
+        );
+        frontWall.position.set(0, roomHeight / 2, roomDepth / 2);
+        frontWall.castShadow = true;
+        room.add(frontWall);
 
-        // Right wall (short, for L)
-        const rightWall = new THREE.Mesh(new THREE.BoxGeometry(wallThickness, roomHeight, roomWidth - 1), wallMaterial);
-        rightWall.position.set(roomLength, roomHeight / 2, (roomWidth - 1) / 2);
-        scene.add(rightWall);
+        // Left wall (terrace)
+        const leftWall = new THREE.Mesh(
+            new THREE.BoxGeometry(wallThickness, roomHeight, roomDepth),
+            wallMaterial
+        );
+        leftWall.position.set(-roomWidth / 2, roomHeight / 2, 0);
+        leftWall.castShadow = true;
+        room.add(leftWall);
 
-        // Front wall segment (bottom part of L)
-        const frontWallShort = new THREE.Mesh(new THREE.BoxGeometry(roomLength - 1, roomHeight, wallThickness), wallMaterial);
-        frontWallShort.position.set((roomLength - 1) / 2, roomHeight / 2, roomWidth);
-        scene.add(frontWallShort);
+        // Right wall
+        const rightWall = new THREE.Mesh(
+            new THREE.BoxGeometry(wallThickness, roomHeight, roomDepth),
+            wallMaterial
+        );
+        rightWall.position.set(roomWidth / 2, roomHeight / 2, 0);
+        rightWall.castShadow = true;
+        room.add(rightWall);
 
-        // Inner L wall
-        const innerWall = new THREE.Mesh(new THREE.BoxGeometry(1, roomHeight, wallThickness), wallMaterial);
-        innerWall.position.set(roomLength - 0.5, roomHeight / 2, roomWidth - 1);
-        scene.add(innerWall);
+        // Roof (toggleable)
+        const roof = new THREE.Mesh(
+            new THREE.PlaneGeometry(roomWidth, roomDepth),
+            roofMaterial
+        );
+        roof.rotation.x = Math.PI / 2;
+        roof.position.y = roomHeight;
+        room.add(roof);
 
-        // Furniture based on sketch labels (positions estimated)
-        // Assuming layout: Washing machine left bottom, counter along bottom, oven/stove/sink/fridge along right
+        // Biblioteca (Library/bookshelf) - back wall
+        const biblioteca = new THREE.Mesh(
+            new THREE.BoxGeometry(2, 2, 0.3),
+            furnitureMaterial
+        );
+        biblioteca.position.set(0, 1, -roomDepth / 2 + 0.15);
+        biblioteca.castShadow = true;
+        room.add(biblioteca);
 
-        // Washing machine (bottom left)
-        const washer = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.9, 0.6), applianceMaterial);
-        washer.position.set(0.3, 0.45, roomWidth - 0.3);
-        scene.add(washer);
+        // Add shelves to biblioteca
+        for (let i = 0; i < 4; i++) {
+            const shelf = new THREE.Mesh(
+                new THREE.BoxGeometry(1.9, 0.05, 0.25),
+                new THREE.MeshStandardMaterial({ color: 0x4a2f1a })
+            );
+            shelf.position.set(0, 0.3 + i * 0.5, -roomDepth / 2 + 0.2);
+            room.add(shelf);
+        }
 
-        // Counter (Arbeitsplatte) along bottom
-        const counter = new THREE.Mesh(new THREE.BoxGeometry(roomLength - 1.2, 0.9, 0.6), counterMaterial);
-        counter.position.set((roomLength - 1.2) / 2 + 0.6, 0.45, roomWidth - 0.3);
-        scene.add(counter);
+        // Escritorio (Desk) - right side
+        const desk = new THREE.Mesh(
+            new THREE.BoxGeometry(1.2, 0.8, 0.6),
+            furnitureMaterial
+        );
+        desk.position.set(roomWidth / 2 - 0.8, 0.4, 0.5);
+        desk.castShadow = true;
+        room.add(desk);
 
-        // Oven (Ofen, under counter)
-        const oven = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.9, 0.6), applianceMaterial);
-        oven.position.set(1.0, 0.45, roomWidth - 0.3);
-        scene.add(oven);
+        // Cama (Bed) - center/left area
+        const bedFrame = new THREE.Mesh(
+            new THREE.BoxGeometry(1.4, 0.4, 2),
+            furnitureMaterial
+        );
+        bedFrame.position.set(-0.8, 0.2, -0.2);
+        bedFrame.castShadow = true;
+        room.add(bedFrame);
 
-        // Stove (Herd, on counter)
-        const stove = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.1, 0.6), applianceMaterial);
-        stove.position.set(1.8, 0.95, roomWidth - 0.3);
-        scene.add(stove);
+        const mattress = new THREE.Mesh(
+            new THREE.BoxGeometry(1.3, 0.3, 1.9),
+            new THREE.MeshStandardMaterial({ color: 0x4169e1 })
+        );
+        mattress.position.set(-0.8, 0.45, -0.2);
+        mattress.castShadow = true;
+        room.add(mattress);
 
-        // Sink (Spüle, on counter)
-        const sink = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.1, 0.6), applianceMaterial);
-        sink.position.set(2.5, 0.95, roomWidth - 0.3);
-        scene.add(sink);
+        // Ropero (Wardrobe/Closet) - right corner
+        const wardrobe = new THREE.Mesh(
+            new THREE.BoxGeometry(1, 2, 0.5),
+            furnitureMaterial
+        );
+        wardrobe.position.set(roomWidth / 2 - 0.6, 1, -roomDepth / 2 + 0.5);
+        wardrobe.castShadow = true;
+        room.add(wardrobe);
 
-        // Fridge (Kühlschrank, right end)
-        const fridge = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.8, 0.6), applianceMaterial);
-        fridge.position.set(roomLength - 0.3, 0.9, roomWidth - 1.7); // Positioned in the L arm
-        scene.add(fridge);
+        // Door (Puerta) - front wall
+        const door = new THREE.Mesh(
+            new THREE.BoxGeometry(0.8, 2, 0.1),
+            doorMaterial
+        );
+        door.position.set(-1, 1, roomDepth / 2);
+        door.castShadow = true;
+        room.add(door);
+
+        // Door handle
+        const handle = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.03, 0.03, 0.15),
+            new THREE.MeshStandardMaterial({ color: 0xcccccc })
+        );
+        handle.rotation.z = Math.PI / 2;
+        handle.position.set(-0.7, 1, roomDepth / 2 + 0.1);
+        room.add(handle);
+
+        scene.add(room);
+
+        // Camera position
+        camera.position.set(6, 4, 6);
+        camera.lookAt(0, 1, 0);
+
+        // Mobile touch controls
+        let isDragging = false;
+        let previousTouch = null;
+        let rotationY = 0;
+        let rotationX = 0;
+        let initialDistance = 0;
+        let cameraDistance = 10;
+
+        renderer.domElement.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                isDragging = true;
+                previousTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            } else if (e.touches.length === 2) {
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                initialDistance = Math.sqrt(dx * dx + dy * dy);
+            }
+        });
+
+        renderer.domElement.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            
+            if (e.touches.length === 1 && isDragging && previousTouch) {
+                const deltaX = e.touches[0].clientX - previousTouch.x;
+                const deltaY = e.touches[0].clientY - previousTouch.y;
+                
+                rotationY += deltaX * 0.005;
+                rotationX += deltaY * 0.005;
+                rotationX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, rotationX));
+                
+                previousTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            } else if (e.touches.length === 2) {
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                const delta = initialDistance - distance;
+                cameraDistance += delta * 0.01;
+                cameraDistance = Math.max(3, Math.min(15, cameraDistance));
+                initialDistance = distance;
+            }
+        });
+
+        renderer.domElement.addEventListener('touchend', () => {
+            isDragging = false;
+            previousTouch = null;
+        });
+
+        // Button controls
+        document.getElementById('reset').addEventListener('click', () => {
+            rotationY = 0;
+            rotationX = 0;
+            cameraDistance = 10;
+        });
+
+        let roofVisible = true;
+        document.getElementById('toggle').addEventListener('click', () => {
+            roofVisible = !roofVisible;
+            roof.visible = roofVisible;
+        });
 
         // Animation loop
         function animate() {
             requestAnimationFrame(animate);
-            controls.update();
+
+            // Update camera position based on rotation
+            camera.position.x = Math.sin(rotationY) * Math.cos(rotationX) * cameraDistance;
+            camera.position.y = Math.sin(rotationX) * cameraDistance + 3;
+            camera.position.z = Math.cos(rotationY) * Math.cos(rotationX) * cameraDistance;
+            camera.lookAt(0, 1, 0);
+
             renderer.render(scene, camera);
         }
-        animate();
 
         // Handle window resize
         window.addEventListener('resize', () => {
@@ -146,6 +339,8 @@
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
+
+        animate();
     </script>
 </body>
 </html>
