@@ -1493,6 +1493,8 @@
                     view2DBtn.classList.remove('active');
                     view3DBtn.classList.add('active');
                     is3DViewActive = true;
+                    // Forțează un render imediat
+                    if (threeDRenderer) animate3D();
                 }
             }
             
@@ -1542,6 +1544,12 @@
                     
                     // Switch to 3D view
                     switchView('3D');
+                    // Forțează afișarea imediat
+                    view3DContainer.style.display = 'block';
+                    designArea.style.display = 'none';
+                    view3DBtn.classList.add('active');
+                    view2DBtn.classList.remove('active');
+                    is3DViewActive = true;
                     
                     alert(`Vizualizarea 3D a fost generată cu succes! ${threeDModelsCount} obiecte au fost create.`);
                 }, 1500);
@@ -1549,111 +1557,69 @@
             
             // Initialize 3D scene
             function init3DScene() {
-                // Get container dimensions
+                // Asigură-te că containerul e vizibil când creezi renderer-ul
+                view3DContainer.style.display = 'block';
+
                 const width = view3DContainer.clientWidth;
-                const height = 500; // Fixed height
-                
-                // Create scene
+                const height = view3DContainer.clientHeight || 500;
+
                 threeDScene = new THREE.Scene();
-                
-                // Create camera
-                threeDCamera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-                threeDCamera.position.set(10, 8, 12);
+                threeDScene.background = new THREE.Color(0xf0f5f5);
+
+                threeDCamera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
+                threeDCamera.position.set(12, 10, 15);
                 threeDCamera.lookAt(0, 0, 0);
-                
-                // Create renderer - ensure alpha is false for solid background
-                threeDRenderer = new THREE.WebGLRenderer({ 
-                    antialias: true,
-                    alpha: false // Important: set to false for solid background
-                });
+
+                threeDRenderer = new THREE.WebGLRenderer({ antialias: true });
                 threeDRenderer.setSize(width, height);
-                threeDRenderer.setClearColor(0xf0f0f0, 1); // Set clear color for the renderer
+                threeDRenderer.setPixelRatio(window.devicePixelRatio);
                 threeDRenderer.shadowMap.enabled = true;
                 threeDRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
-                
-                // Clear previous content
+                threeDRenderer.outputEncoding = THREE.sRGBEncoding;
+
+                // Curăță containerul și adaugă canvas-ul
                 view3DContainer.innerHTML = '';
                 view3DContainer.appendChild(threeDRenderer.domElement);
-                
-                // Add lights - make them stronger initially
-                const ambientLight = new THREE.AmbientLight(0xffffff, 0.8); // Increased intensity
-                threeDScene.add(ambientLight);
-                
-                const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0); // Increased intensity
-                directionalLight.position.set(10, 20, 5);
-                directionalLight.castShadow = true;
-                directionalLight.shadow.mapSize.width = 2048;
-                directionalLight.shadow.mapSize.height = 2048;
-                threeDScene.add(directionalLight);
-                
-                // Add a second light from the opposite side to reduce shadows
-                const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.5);
-                directionalLight2.position.set(-10, 10, -5);
-                threeDScene.add(directionalLight2);
-                
-                // Add floor with less reflective material
-                const floorGeometry = new THREE.PlaneGeometry(20, 20);
-                const floorMaterial = new THREE.MeshLambertMaterial({ 
-                    color: 0xeeeeee,
-                    side: THREE.DoubleSide
-                });
-                const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-                floor.rotation.x = Math.PI / 2;
+
+                // Lumini
+                const ambient = new THREE.AmbientLight(0xffffff, 0.7);
+                threeDScene.add(ambient);
+
+                const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+                dirLight.position.set(10, 20, 10);
+                dirLight.castShadow = true;
+                dirLight.shadow.mapSize.width = 2048;
+                dirLight.shadow.mapSize.height = 2048;
+                threeDScene.add(dirLight);
+
+                const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
+                dirLight2.position.set(-10, 15, -5);
+                threeDScene.add(dirLight2);
+
+                // Podea
+                const floorGeo = new THREE.PlaneGeometry(30, 30);
+                const floorMat = new THREE.MeshStandardMaterial({ color: 0xeeeeee });
+                const floor = new THREE.Mesh(floorGeo, floorMat);
+                floor.rotation.x = -Math.PI / 2;
                 floor.position.y = -0.5;
                 floor.receiveShadow = true;
                 threeDScene.add(floor);
-                
-                // Add grid helper
-                const gridHelper = new THREE.GridHelper(20, 20, 0xcccccc, 0xcccccc);
-                gridHelper.position.y = -0.49;
-                threeDScene.add(gridHelper);
-                
-                // Add walls with solid color (not transparent)
-                const wallMaterial = new THREE.MeshLambertMaterial({ 
-                    color: 0xf5f5f5
-                });
-                
-                // Back wall
-                const backWall = new THREE.Mesh(
-                    new THREE.PlaneGeometry(20, 10),
-                    wallMaterial
-                );
-                backWall.position.z = -10;
-                backWall.position.y = 4.5;
+
+                // Grid
+                const grid = new THREE.GridHelper(30, 30, 0x888888, 0xcccccc);
+                grid.position.y = -0.49;
+                threeDScene.add(grid);
+
+                // Pereți simpli (opțional)
+                const wallMat = new THREE.MeshStandardMaterial({ color: 0xf8f8f8 });
+                const backWall = new THREE.Mesh(new THREE.PlaneGeometry(30, 15), wallMat);
+                backWall.position.set(0, 7, -15);
                 threeDScene.add(backWall);
-                
-                // Side walls
-                const leftWall = new THREE.Mesh(
-                    new THREE.PlaneGeometry(20, 10),
-                    wallMaterial
-                );
-                leftWall.rotation.y = Math.PI / 2;
-                leftWall.position.x = -10;
-                leftWall.position.y = 4.5;
-                threeDScene.add(leftWall);
-                
-                const rightWall = new THREE.Mesh(
-                    new THREE.PlaneGeometry(20, 10),
-                    wallMaterial
-                );
-                rightWall.rotation.y = -Math.PI / 2;
-                rightWall.position.x = 10;
-                rightWall.position.y = 4.5;
-                threeDScene.add(rightWall);
-                
-                // Add ceiling
-                const ceiling = new THREE.Mesh(
-                    new THREE.PlaneGeometry(20, 20),
-                    new THREE.MeshLambertMaterial({ color: 0xf9f9f9 })
-                );
-                ceiling.rotation.x = Math.PI / 2;
-                ceiling.position.y = 9.5;
-                threeDScene.add(ceiling);
-                
-                // Add 3D controls UI
+
+                // Controale 3D
                 add3DControls();
-                
-                // Start animation
+
+                // Pornește animația imediat
                 animate3D();
             }
             
@@ -1888,9 +1854,17 @@
             // Animate 3D scene
             function animate3D() {
                 requestAnimationFrame(animate3D);
-                
-                // Only render if 3D view is active
-                if (is3DViewActive && threeDRenderer && threeDScene && threeDCamera) {
+
+                // Redimensionează dacă fereastra s-a schimbat
+                const width = view3DContainer.clientWidth;
+                const height = view3DContainer.clientHeight || 500;
+                if (threeDRenderer && threeDCamera) {
+                    threeDRenderer.setSize(width, height);
+                    threeDCamera.aspect = width / height;
+                    threeDCamera.updateProjectionMatrix();
+                }
+
+                if (threeDRenderer && threeDScene && threeDCamera) {
                     threeDRenderer.render(threeDScene, threeDCamera);
                 }
             }
