@@ -1,28 +1,25 @@
 {
-  "room_layout": {
-    "room_id": "dormitor",
-      "name": "dormitor",
-      "description": "dormitor",
-      "exits": "ușă spre coridor",
-      "shape": "paralelipiped",
-      "length": "320cm",
-      "width": "310cm",
-      "height": "220cm",
+  "prompt": {
+    "room": {
+      "id": "bedroom_001",
+      "name": "bedroom",
+      "description": "bedroom layout",
+      "shape": "rectangular",
+      "dimensions": [3.2, 3.1, 2.2],
       "items": [
-      {"ușă": "sw"},
-      {"noptieră": "s"},
-      {"birou": "se"},
-      {"scaun": "se"},
-      {"fereastră": "e"},
-      {"plante": "e"},
-      {"bibliotecă": "nw"},
-      {"șifonier": "n"},
-      {"pat": "ne"}
+        "door",
+        "bookcase",
+        "wardrobe",
+        "bed"
+        ["window", "plants"],
+        ["desk", "chair"],
       ],
       "metadata": {
-        "lumină": "naturală"
+        "light": "natural"
       }
-  },
-  "bot_role": ["designer", "coder"],
-  "task": "Create a HTML webpage with a 3d realistic interactive view of the room with the above layout"
+    },
+    "role": "image generator",
+    "task": "please generate a realistic panoramic 3d image of bedroom_001"
+  }
 }
+
