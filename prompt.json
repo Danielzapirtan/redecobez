@@ -24,5 +24,5 @@
       }
   },
   "bot_role": ["designer", "coder"],
-  "task": "Create a HTML webpage with a 3d realistic interactive view of the room with the above layout",
+  "task": "Create a HTML webpage with a 3d realistic interactive view of the room with the above layout"
 }
