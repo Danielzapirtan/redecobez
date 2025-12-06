@@ -1,0 +1,28 @@
+{
+  "room_layout": {
+    "room_id": "dormitor",
+      "name": "dormitor",
+      "description": "dormitor",
+      "exits": "ușă spre coridor",
+      "shape": "paralelipiped",
+      "length": "320cm",
+      "width": "310cm",
+      "height": "220cm",
+      "items": [
+      {"ușă": "sw"},
+      {"noptieră": "s"},
+      {"birou": "se"},
+      {"scaun": "se"},
+      {"fereastră": "e"},
+      {"plante": "e"},
+      {"bibliotecă": "nw"},
+      {"șifonier": "n"},
+      {"pat": "ne"}
+      ],
+      "metadata": {
+        "lumină": "naturală"
+      }
+  },
+  "bot_role": ["designer", "coder"],
+  "task": "Create a HTML webpage with a 3d realistic interactive view of the room with the above layout",
+}
