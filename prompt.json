@@ -1,7 +1,7 @@
 {
   "prompt": {
     "room": {
-      "id": "bedroom_001",
+      "id": "bedroom_002",
       "name": "bedroom",
       "description": "bedroom layout",
       "shape": "rectangular",
@@ -10,16 +10,17 @@
         "door",
         "bookcase",
         "wardrobe",
-        "bed"
+        "bed",
         ["window", "plants"],
         ["desk", "chair"],
+        "bedside"        
       ],
       "metadata": {
         "light": "natural"
       }
     },
     "role": "image generator",
-    "task": "please generate a realistic panoramic 3d image of bedroom_001"
+    "task": "please generate a realistic panoramic 3d image of bedroom_002"
   }
 }
 
