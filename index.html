@@ -1,1254 +1,772 @@
 <!DOCTYPE html>
-<html lang="ro">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Designer de Camere AI - Generator de Prompturi JSON</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>AR Room Decorator</title>
     <style>
-        :root {
-            --primary: #10a37f;
-            --primary-dark: #0d8c6d;
-            --secondary: #5438dc;
-            --light: #f8f9fa;
-            --dark: #343a40;
-            --gray: #6c757d;
-            --light-gray: #e9ecef;
-            --border-radius: 12px;
-            --shadow: 0 4px 12px rgba(0,0,0,0.1);
-            --transition: all 0.3s ease;
-        }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: var(--dark);
-            min-height: 100vh;
-            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            overflow: hidden;
+            background: #000;
         }
         
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .logo i {
-            font-size: 2.5rem;
-            color: var(--primary);
-        }
-        
-        h1 {
-            color: var(--primary);
-            font-size: 2.2rem;
-        }
-        
-        .subtitle {
-            color: var(--gray);
-            font-size: 1.1rem;
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-        
-        .app-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        
-        @media (max-width: 992px) {
-            .app-container {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .design-panel, .prompt-panel {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 25px;
-            box-shadow: var(--shadow);
-        }
-        
-        .panel-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--light-gray);
-        }
-        
-        .panel-title i {
-            color: var(--primary);
-            font-size: 1.5rem;
-        }
-        
-        h2 {
-            color: var(--dark);
-            font-size: 1.5rem;
-        }
-        
-        .design-controls {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-        
-        @media (max-width: 768px) {
-            .design-controls {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .control-group {
-            margin-bottom: 10px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--dark);
-        }
-        
-        select, input[type="color"], input[type="range"], input[type="text"], input[type="number"] {
+        #ar-canvas {
+            position: absolute;
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid var(--light-gray);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: var(--transition);
-            background: white;
+            height: 100%;
         }
         
-        select:focus, input:focus {
-            outline: none;
-            border-color: var(--primary);
+        /* UI Container */
+        #ui-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 10;
         }
         
-        .color-picker-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        #ui-container > * {
+            pointer-events: auto;
         }
         
-        .color-preview {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            border: 2px solid var(--light-gray);
-        }
-        
-        .range-value {
-            display: inline-block;
-            margin-left: 10px;
-            font-weight: 600;
-            color: var(--primary);
-        }
-        
-        .dimensions-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 10px;
-        }
-        
-        .furniture-selection {
-            margin-top: 20px;
-        }
-        
-        .furniture-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        @media (max-width: 576px) {
-            .furniture-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .dimensions-container {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .furniture-item {
-            padding: 12px;
-            background: var(--light-gray);
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
-            border: 2px solid transparent;
-        }
-        
-        .furniture-item:hover {
-            background: #dae0e5;
-        }
-        
-        .furniture-item.selected {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary-dark);
-        }
-        
-        .furniture-item i {
-            display: block;
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-        }
-        
-        .room-preview {
-            background: #f8f9fa;
-            border-radius: 10px;
+        /* Top Bar */
+        #top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
             padding: 20px;
-            margin-top: 25px;
-            text-align: center;
-            min-height: 200px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border: 2px dashed #c3cfe2;
-        }
-        
-        .room-icon {
-            font-size: 4rem;
-            color: var(--primary);
-            margin-bottom: 15px;
-        }
-        
-        .room-details {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 15px;
-            width: 100%;
-        }
-        
-        .detail-item {
-            background: white;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-        }
-        
-        .prompt-display {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 25px;
-            font-family: 'Monaco', 'Consolas', monospace;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            white-space: pre;
-            word-wrap: break-word;
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid #333;
-        }
-        
-        .json-key {
-            color: #9cdcfe;
-        }
-        
-        .json-string {
-            color: #ce9178;
-        }
-        
-        .json-number {
-            color: #b5cea8;
-        }
-        
-        .json-boolean {
-            color: #569cd6;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-        
-        .btn {
-            padding: 14px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            flex: 1;
-        }
-        
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(16, 163, 127, 0.3);
-        }
-        
-        .btn-secondary {
-            background: var(--light-gray);
-            color: var(--dark);
-        }
-        
-        .btn-secondary:hover {
-            background: #dae0e5;
-        }
-        
-        .instructions {
-            background: #e8f4f1;
-            border-radius: 10px;
-            padding: 20px;
-            border-left: 5px solid var(--primary);
-        }
-        
-        .instructions h3 {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            color: var(--primary-dark);
-        }
-        
-        .instructions ol {
-            padding-left: 20px;
-        }
-        
-        .instructions li {
-            margin-bottom: 12px;
-            line-height: 1.5;
-        }
-        
-        .history-panel {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 25px;
-            box-shadow: var(--shadow);
-            margin-top: 30px;
-        }
-        
-        .history-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .history-item {
-            background: var(--light-gray);
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: var(--transition);
-            border: 2px solid transparent;
-        }
-        
-        .history-item:hover {
-            background: #dae0e5;
-            border-color: var(--primary);
-        }
-        
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            padding: 20px;
-            color: var(--gray);
-            font-size: 0.9rem;
-            border-top: 1px solid var(--light-gray);
-        }
-        
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            background: var(--primary);
-            color: white;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 1000;
-            transform: translateX(150%);
-            transition: transform 0.5s ease;
-        }
-        
-        .notification.show {
-            transform: translateX(0);
-        }
-        
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            background: var(--secondary);
-            color: white;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            margin-left: 5px;
-        }
-        
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--light-gray);
-        }
-        
-        .tab {
-            padding: 12px 24px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--gray);
-            border-bottom: 3px solid transparent;
-            transition: var(--transition);
-        }
-        
-        .tab.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .furniture-controls {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 2px solid var(--light-gray);
-        }
-        
-        .furniture-list {
-            margin-top: 15px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .furniture-config-item {
-            background: var(--light-gray);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        
-        .furniture-config-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
         }
         
-        .remove-furniture {
-            background: #dc3545;
+        #status {
+            color: white;
+            font-size: 14px;
+            background: rgba(0,0,0,0.6);
+            padding: 8px 12px;
+            border-radius: 20px;
+        }
+        
+        #exit-btn {
+            background: rgba(255,59,48,0.9);
             color: white;
             border: none;
-            border-radius: 4px;
-            padding: 4px 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        /* Furniture Menu */
+        #furniture-menu {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        #furniture-menu.active {
+            display: flex;
+        }
+        
+        #furniture-scroll {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding: 0 20px 10px 20px;
+            max-width: 100%;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        #furniture-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .furniture-item {
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            padding: 12px;
+            min-width: 100px;
+            text-align: center;
             cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .furniture-item:active {
+            transform: scale(0.95);
+        }
+        
+        .furniture-item.selected {
+            background: rgba(0,122,255,0.95);
+            color: white;
+        }
+        
+        .furniture-icon {
+            font-size: 36px;
+            margin-bottom: 5px;
+        }
+        
+        .furniture-name {
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        /* Controls */
+        #controls {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        #controls.active {
+            display: flex;
+        }
+        
+        .control-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.95);
+            border: none;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .control-btn:active {
+            transform: scale(0.9);
+        }
+        
+        .control-btn.danger {
+            background: rgba(255,59,48,0.95);
+            color: white;
+        }
+        
+        /* Start Screen */
+        #start-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+            color: white;
+            z-index: 100;
+        }
+        
+        #start-screen h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        #start-screen p {
+            font-size: 16px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        
+        #start-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+        
+        #start-btn:active {
+            transform: scale(0.95);
+        }
+        
+        #start-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Instructions */
+        #instructions {
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 90%;
+            display: none;
+        }
+        
+        #instructions.active {
+            display: block;
+        }
+        
+        /* Color Picker */
+        #color-picker {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.95);
+            padding: 15px;
+            border-radius: 12px;
+            display: none;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        #color-picker.active {
+            display: flex;
+        }
+        
+        .color-option {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 3px solid white;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        
+        .color-option.selected {
+            border-color: #007aff;
+            box-shadow: 0 0 0 2px #007aff;
+        }
+
+        .debug {
+            position: absolute;
+            top: 100px;
+            left: 20px;
+            background: rgba(0,0,0,0.8);
+            color: #0f0;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            border-radius: 5px;
+            max-width: 300px;
+            word-wrap: break-word;
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="logo">
-                <i class="fas fa-couch"></i>
-                <h1>Designer de Camere AI - JSON Generator</h1>
-            </div>
-            <p class="subtitle">
-                Creează configurații JSON pentru prezentare camere! Personalizează toate detaliile, generează promptul JSON optimizat 
-                pentru prezentări și vizualizări 3D.
-            </p>
-        </header>
-        
-        <main>
-            <div class="app-container">
-                <!-- Panou Design Cameră -->
-                <section class="design-panel">
-                    <div class="panel-title">
-                        <i class="fas fa-paint-roller"></i>
-                        <h2>Configurează Camera</h2>
-                    </div>
-                    
-                    <div class="tabs">
-                        <button class="tab active" data-tab="basic">Configurare Basic</button>
-                        <button class="tab" data-tab="dimensions">Dimensiuni</button>
-                        <button class="tab" data-tab="furniture">Mobilier</button>
-                    </div>
-                    
-                    <div class="tab-content active" id="basic-tab">
-                        <div class="design-controls">
-                            <div class="control-group">
-                                <label for="roomType"><i class="fas fa-door-open"></i> Tip Cameră</label>
-                                <select id="roomType">
-                                    <option value="living">Living</option>
-                                    <option value="bedroom" selected>Dormitor</option>
-                                    <option value="kitchen">Bucătărie</option>
-                                    <option value="bathroom">Baie</option>
-                                    <option value="office">Birou</option>
-                                    <option value="dining">Sufragerie</option>
-                                </select>
-                            </div>
-                            
-                            <div class="control-group">
-                                <label for="style"><i class="fas fa-palette"></i> Stil Interior</label>
-                                <select id="style">
-                                    <option value="modern">Modern</option>
-                                    <option value="classical" selected>Clasic</option>
-                                    <option value="scandinavian">Scandinavian</option>
-                                    <option value="industrial">Industrial</option>
-                                    <option value="bohemian">Bohemian</option>
-                                    <option value="traditional">Traditional</option>
-                                    <option value="minimalist">Minimalist</option>
-                                </select>
-                            </div>
-                            
-                            <div class="control-group">
-                                <label for="roomId"><i class="fas fa-hashtag"></i> ID Cameră</label>
-                                <input type="text" id="roomId" value="bedroom_004">
-                            </div>
-                            
-                            <div class="control-group">
-                                <label for="roomName"><i class="fas fa-signature"></i> Nume Cameră</label>
-                                <input type="text" id="roomName" value="Bedroom">
-                            </div>
-                            
-                            <div class="control-group">
-                                <label for="lighting"><i class="fas fa-lightbulb"></i> Iluminat</label>
-                                <select id="lighting">
-                                    <option value="natural" selected>Natural</option>
-                                    <option value="warm">Călduros</option>
-                                    <option value="bright">Luminos</option>
-                                    <option value="moody">Atmosferic</option>
-                                </select>
-                            </div>
-                            
-                            <div class="control-group">
-                                <label for="description"><i class="fas fa-align-left"></i> Descriere</label>
-                                <textarea id="description" rows="3" style="width:100%; padding:12px 15px; border:2px solid var(--light-gray); border-radius:8px;">Classical-style bedroom layout with furniture placement</textarea>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-content" id="dimensions-tab">
-                        <div class="control-group">
-                            <label><i class="fas fa-expand-arrows-alt"></i> Dimensiuni Cameră (metri)</label>
-                            <div class="dimensions-container">
-                                <div>
-                                    <label for="roomLength">Lungime</label>
-                                    <input type="number" id="roomLength" min="1" max="20" step="0.1" value="3.2">
-                                </div>
-                                <div>
-                                    <label for="roomWidth">Lățime</label>
-                                    <input type="number" id="roomWidth" min="1" max="20" step="0.1" value="3.1">
-                                </div>
-                                <div>
-                                    <label for="roomHeight">Înălțime</label>
-                                    <input type="number" id="roomHeight" min="1" max="10" step="0.1" value="2.2">
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="control-group">
-                            <label for="roomShape"><i class="fas fa-vector-square"></i> Formă Cameră</label>
-                            <select id="roomShape">
-                                <option value="rectangular" selected>Dreptunghiulară</option>
-                                <option value="square">Pătrată</option>
-                                <option value="L-shaped">Forma L</option>
-                                <option value="open-plan">Open Plan</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="tab-content" id="furniture-tab">
-                        <div class="furniture-controls">
-                            <div class="control-group">
-                                <label><i class="fas fa-plus-circle"></i> Adaugă Mobilier</label>
-                                <div style="display:flex; gap:10px;">
-                                    <select id="newFurnitureType" style="flex:1;">
-                                        <option value="Door">Ușă</option>
-                                        <option value="Window">Fereastră</option>
-                                        <option value="Bed">Pat</option>
-                                        <option value="Desk">Birou</option>
-                                        <option value="Chair">Scaun</option>
-                                        <option value="Wardrobe">Dulap</option>
-                                        <option value="Bookcase">Bibliotecă</option>
-                                        <option value="Nightstand">Noptieră</option>
-                                        <option value="Plants">Plante</option>
-                                        <option value="Sofa">Canapea</option>
-                                        <option value="Table">Masă</option>
-                                    </select>
-                                    <button class="btn btn-primary" id="addFurnitureBtn" style="flex:0 0 auto;">
-                                        <i class="fas fa-plus"></i> Adaugă
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div class="furniture-list" id="furnitureList">
-                                <!-- Furniture items will be added by JavaScript -->
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="room-preview">
-                        <i class="fas fa-home room-icon" id="roomIcon"></i>
-                        <h3 id="roomTitle">Dormitor Clasic</h3>
-                        <div class="room-details" id="roomDetails">
-                            <!-- Details will be populated by JavaScript -->
-                        </div>
-                    </div>
-                </section>
-                
-                <!-- Panou Prompt și Instrucțiuni -->
-                <section class="prompt-panel">
-                    <div class="panel-title">
-                        <i class="fas fa-code"></i>
-                        <h2>JSON Configurație Generat</h2>
-                    </div>
-                    
-                    <div class="prompt-display" id="promptDisplay">
-                        {
-  "project_information": {
-    "schema": "IFC-aligned spatial configuration",
-    "version": "1.0",
-    "unit": "meters"
-  },
-  "space": {
-    "id": "bedroom_004",
-    "name": "Bedroom",
-    "description": "Classical-style bedroom layout with furniture placement",
-    "shape": "rectangular",
-    "dimensions": {
-      "length": 3.2,
-      "width": 3.1,
-      "height": 2.2
-    },
-    "style": "classical",
-    "furniture_placement_requirements": [
-      "All objects must be positioned exactly according to provided coordinates",
-      "All objects must maintain exact specified dimensions",
-      "Rotation values must be applied precisely where specified",
-      "Object positions are relative to room origin (0,0) at bottom-left corner"
-    ],
-    "furniture": [
-      {
-        "type": "Door",
-        "ifc_class": "IfcDoor",
-        "position": {"x": 0.0, "y": 0.0},
-        "dimensions": {"length": 0.0, "width": 0.4},
-        "height": 2.1
-      },
-      {
-        "type": "Bookcase",
-        "ifc_class": "IfcFurniture",
-        "position": {"x": 0.0, "y": 1.5},
-        "dimensions": {"length": 0.2, "width": 1.6},
-        "height": 2.0
-      },
-      {
-        "type": "Wardrobe",
-        "ifc_class": "IfcFurniture",
-        "position": {"x": 0.2, "y": 2.7},
-        "dimensions": {"length": 1.2, "width": 0.4},
-        "height": 2.1
-      }
-    ],
-    "metadata": {
-      "lighting": "natural",
-      "coordinate_system": "Cartesian (x,y) with origin at room corner",
-      "scale": "1 unit = 1 meter"
-    }
-  },
-  "visualization_instructions": {
-    "task": "Generate a photorealistic 3D rendering of Bedroom_004",
-    "requirements": [
-      "Viewpoint showing overall room layout",
-      "Maintain exact spatial positioning of all objects as specified",
-      "Maintain precise dimensional accuracy of all objects",
-      "Apply classical architectural style consistently",
-      "Ensure natural lighting conditions as specified"
-    ]
-  }
-}
-                    </div>
-                    
-                    <div class="action-buttons">
-                        <button class="btn btn-primary" id="copyBtn">
-                            <i class="far fa-copy"></i> Copiază JSON
-                        </button>
-                        <button class="btn btn-secondary" id="generateBtn">
-                            <i class="fas fa-sync-alt"></i> Regenerează
-                        </button>
-                    </div>
-                    
-                    <div class="instructions">
-                        <h3><i class="fas fa-graduation-cap"></i> Cum folosești configurația JSON:</h3>
-                        <ol>
-                            <li><strong>Copiază configurația JSON</strong> (butonul "Copiază JSON")</li>
-                            <li><strong>Folosește-l pentru prezentări</strong> în aplicații de vizualizare 3D</li>
-                            <li><strong>Integrează în tool-uri</strong> de design interior sau arhitectură</li>
-                            <li><strong>Partajează cu clienți</strong> pentru aprobare vizuală</li>
-                            <li><strong>Exportă ca bază</strong> pentru proiecte BIM</li>
-                        </ol>
-                        <p style="margin-top: 10px; font-style: italic; color: var(--primary-dark);">
-                            <i class="fas fa-lightbulb"></i> 
-                            <strong>Sfat:</strong> Această configurație este optimizată pentru prezentări, nu pentru implementare tehnică detaliată.
-                        </p>
-                    </div>
-                </section>
-            </div>
-            
-            <!-- Istoric Configurații (opțional) -->
-            <section class="history-panel" id="historyPanel">
-                <div class="panel-title">
-                    <i class="fas fa-history"></i>
-                    <h2>Istoric Configurații <span class="badge">Beta</span></h2>
-                </div>
-                <p>Configurațiile tale recente (stocate local în browser):</p>
-                <div class="history-list" id="historyList">
-                    <!-- History items will be added by JavaScript -->
-                </div>
-            </section>
-        </main>
-        
-        <footer>
-            <p>Acest tool generează configurații JSON optimizate pentru prezentări de design interior.</p>
-            <p>Formatul este compatibil cu sisteme de vizualizare 3D și tool-uri de prezentare.</p>
-        </footer>
+    <!-- Start Screen -->
+    <div id="start-screen">
+        <h1>🏠 AR Room Decorator</h1>
+        <p>Place and arrange furniture in your room using augmented reality</p>
+        <button id="start-btn">Start Decorating</button>
+        <div id="debug-info" class="debug"></div>
     </div>
     
-    <!-- Notificare Copiere -->
-    <div class="notification" id="notification">
-        <i class="fas fa-check-circle"></i>
-        <span>JSON copiat în clipboard!</span>
+    <!-- AR Canvas -->
+    <canvas id="ar-canvas"></canvas>
+    
+    <!-- UI Overlay -->
+    <div id="ui-container">
+        <!-- Top Bar -->
+        <div id="top-bar" style="display: none;">
+            <div id="status">Initializing...</div>
+            <button id="exit-btn">Exit AR</button>
+        </div>
+        
+        <!-- Instructions -->
+        <div id="instructions">
+            Tap on the floor to place furniture
+        </div>
+        
+        <!-- Furniture Menu -->
+        <div id="furniture-menu">
+            <div id="furniture-scroll"></div>
+        </div>
+        
+        <!-- Controls -->
+        <div id="controls">
+            <button class="control-btn" id="rotate-btn" title="Rotate">🔄</button>
+            <button class="control-btn" id="color-btn" title="Change Color">🎨</button>
+            <button class="control-btn danger" id="delete-btn" title="Delete">🗑️</button>
+        </div>
+        
+        <!-- Color Picker -->
+        <div id="color-picker"></div>
     </div>
-
-    <script>
-        // Date inițiale
-        const furnitureTemplates = {
-            'Door': { ifc_class: 'IfcDoor', dimensions: { length: 0.0, width: 0.4 }, height: 2.1, position: { x: 0.0, y: 0.0 } },
-            'Window': { ifc_class: 'IfcWindow', dimensions: { length: 0.1, width: 1.7 }, height: 1.5, position: { x: 3.1, y: 0.7 } },
-            'Bed': { ifc_class: 'IfcFurniture', dimensions: { length: 1.6, width: 0.6 }, height: 0.5, position: { x: 1.4, y: 2.5 } },
-            'Desk': { ifc_class: 'IfcFurniture', dimensions: { length: 1.1, width: 0.3 }, height: 0.75, position: { x: 2.1, y: 0.0 } },
-            'Chair': { ifc_class: 'IfcFurniture', dimensions: { length: 0.5, width: 0.4 }, height: 0.9, position: { x: 2.4, y: 0.3 } },
-            'Wardrobe': { ifc_class: 'IfcFurniture', dimensions: { length: 1.2, width: 0.4 }, height: 2.1, position: { x: 0.2, y: 2.7 } },
-            'Bookcase': { ifc_class: 'IfcFurniture', dimensions: { length: 0.2, width: 1.6 }, height: 2.0, position: { x: 0.0, y: 1.5 } },
-            'Nightstand': { ifc_class: 'IfcFurniture', dimensions: { length: 0.6, width: 0.4 }, height: 0.7, position: { x: 1.2, y: 0.0 } },
-            'Plants': { ifc_class: 'IfcFurniture', dimensions: { length: 0.1, width: 1.7 }, height: 1.0, position: { x: 3.0, y: 0.7 } },
-            'Sofa': { ifc_class: 'IfcFurniture', dimensions: { length: 2.0, width: 0.8 }, height: 0.8, position: { x: 1.0, y: 1.0 } },
-            'Table': { ifc_class: 'IfcFurniture', dimensions: { length: 1.2, width: 0.6 }, height: 0.75, position: { x: 1.5, y: 1.5 } }
-        };
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <script type="module">
+        const DEBUG = false; // Set to true to see debug messages
         
-        const roomIcons = {
-            'living': 'fas fa-couch',
-            'bedroom': 'fas fa-bed',
-            'kitchen': 'fas fa-utensils',
-            'bathroom': 'fas fa-bath',
-            'office': 'fas fa-briefcase',
-            'dining': 'fas fa-utensils'
-        };
+        function log(msg) {
+            console.log(msg);
+            if (DEBUG) {
+                const debugDiv = document.getElementById('debug-info');
+                debugDiv.style.display = 'block';
+                debugDiv.innerHTML += msg + '<br>';
+            }
+        }
         
-        // Mobiliere inițiale
-        let furnitureItems = [
-            { type: 'Door', ifc_class: 'IfcDoor', position: { x: 0.0, y: 0.0 }, dimensions: { length: 0.0, width: 0.4 }, height: 2.1 },
-            { type: 'Bookcase', ifc_class: 'IfcFurniture', position: { x: 0.0, y: 1.5 }, dimensions: { length: 0.2, width: 1.6 }, height: 2.0 },
-            { type: 'Wardrobe', ifc_class: 'IfcFurniture', position: { x: 0.2, y: 2.7 }, dimensions: { length: 1.2, width: 0.4 }, height: 2.1 },
-            { type: 'Bed', ifc_class: 'IfcFurniture', position: { x: 1.4, y: 2.5 }, dimensions: { length: 1.6, width: 0.6 }, height: 0.5 },
-            { type: 'Window', ifc_class: 'IfcWindow', position: { x: 3.1, y: 0.7 }, dimensions: { length: 0.1, width: 1.7 }, height: 1.5 },
-            { type: 'Plants', ifc_class: 'IfcFurniture', position: { x: 3.0, y: 0.7 }, dimensions: { length: 0.1, width: 1.7 }, height: 1.0 },
-            { type: 'Desk', ifc_class: 'IfcFurniture', position: { x: 2.1, y: 0.0 }, dimensions: { length: 1.1, width: 0.3 }, height: 0.75 },
-            { type: 'Chair', ifc_class: 'IfcFurniture', position: { x: 2.4, y: 0.3 }, dimensions: { length: 0.5, width: 0.4 }, height: 0.9 },
-            { type: 'Nightstand', ifc_class: 'IfcFurniture', position: { x: 1.2, y: 0.0 }, dimensions: { length: 0.6, width: 0.4 }, height: 0.7 }
+        // Furniture catalog
+        const furnitureData = [
+            { id: 'sofa', name: 'Sofa', icon: '🛋️', width: 0.8, height: 0.4, depth: 0.4, color: 0x8B7355 },
+            { id: 'chair', name: 'Chair', icon: '🪑', width: 0.4, height: 0.5, depth: 0.4, color: 0x654321 },
+            { id: 'table', name: 'Table', icon: '🪑', width: 0.6, height: 0.4, depth: 0.6, color: 0x8B4513 },
+            { id: 'bed', name: 'Bed', icon: '🛏️', width: 1.0, height: 0.3, depth: 0.8, color: 0xFFFFFF },
+            { id: 'desk', name: 'Desk', icon: '🖥️', width: 0.7, height: 0.4, depth: 0.4, color: 0x8B7355 },
+            { id: 'shelf', name: 'Shelf', icon: '📚', width: 0.6, height: 0.8, depth: 0.2, color: 0x654321 },
+            { id: 'lamp', name: 'Lamp', icon: '💡', width: 0.15, height: 0.5, depth: 0.15, color: 0xFFD700 },
+            { id: 'plant', name: 'Plant', icon: '🪴', width: 0.2, height: 0.4, depth: 0.2, color: 0x228B22 },
+            { id: 'tv', name: 'TV Stand', icon: '📺', width: 0.7, height: 0.4, depth: 0.3, color: 0x2F4F4F },
+            { id: 'rug', name: 'Rug', icon: '🟫', width: 1.2, height: 0.01, depth: 0.8, color: 0x8B4513 }
         ];
         
-        // Starea aplicației
-        let promptHistory = JSON.parse(localStorage.getItem('roomJSONHistory')) || [];
+        const colors = [
+            { name: 'Brown', value: 0x8B4513 },
+            { name: 'White', value: 0xFFFFFF },
+            { name: 'Black', value: 0x2F4F4F },
+            { name: 'Gray', value: 0x808080 },
+            { name: 'Red', value: 0xDC143C },
+            { name: 'Blue', value: 0x4169E1 },
+            { name: 'Green', value: 0x228B22 },
+            { name: 'Yellow', value: 0xFFD700 }
+        ];
         
-        // Inițializare la încărcarea paginii
-        document.addEventListener('DOMContentLoaded', function() {
-            initFurnitureList();
-            initEventListeners();
-            updateRoomPreview();
-            generateJSON();
-            updateHistoryPanel();
-            
-            // Setează tab-urile
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const tabId = this.dataset.tab;
-                    
-                    // Remove active class from all tabs and contents
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    
-                    // Add active class to current tab and content
-                    this.classList.add('active');
-                    document.getElementById(`${tabId}-tab`).classList.add('active');
-                });
+        // State
+        let session = null;
+        let renderer, scene, camera;
+        let hitTestSource = null;
+        let hitTestSourceRequested = false;
+        let reticle = null;
+        let placedFurniture = [];
+        let selectedFurniture = null;
+        let selectedFurnitureType = null;
+        let controller = null;
+        
+        // UI Elements
+        const startScreen = document.getElementById('start-screen');
+        const startBtn = document.getElementById('start-btn');
+        const topBar = document.getElementById('top-bar');
+        const statusDiv = document.getElementById('status');
+        const exitBtn = document.getElementById('exit-btn');
+        const furnitureMenu = document.getElementById('furniture-menu');
+        const furnitureScroll = document.getElementById('furniture-scroll');
+        const controls = document.getElementById('controls');
+        const instructions = document.getElementById('instructions');
+        const rotateBtn = document.getElementById('rotate-btn');
+        const colorBtn = document.getElementById('color-btn');
+        const deleteBtn = document.getElementById('delete-btn');
+        const colorPicker = document.getElementById('color-picker');
+        
+        // Initialize furniture menu
+        function initFurnitureMenu() {
+            furnitureData.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'furniture-item';
+                div.innerHTML = `
+                    <div class="furniture-icon">${item.icon}</div>
+                    <div class="furniture-name">${item.name}</div>
+                `;
+                div.addEventListener('click', () => selectFurnitureType(item, div));
+                furnitureScroll.appendChild(div);
             });
+        }
+        
+        // Initialize color picker
+        function initColorPicker() {
+            colors.forEach((color, index) => {
+                const div = document.createElement('div');
+                div.className = 'color-option';
+                div.style.background = `#${color.value.toString(16).padStart(6, '0')}`;
+                div.addEventListener('click', () => changeSelectedColor(color.value, div));
+                colorPicker.appendChild(div);
+            });
+        }
+        
+        function selectFurnitureType(item, element) {
+            selectedFurnitureType = item;
+            document.querySelectorAll('.furniture-item').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            deselectFurniture();
+            instructions.textContent = `Tap on floor to place ${item.name}`;
+            instructions.classList.add('active');
+        }
+        
+        function changeSelectedColor(colorValue, element) {
+            if (!selectedFurniture) return;
+            
+            selectedFurniture.traverse(child => {
+                if (child.isMesh && child.material) {
+                    child.material.color.setHex(colorValue);
+                }
+            });
+            
+            document.querySelectorAll('.color-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+        
+        function selectFurniture(furniture) {
+            deselectFurniture();
+            selectedFurniture = furniture;
+            controls.classList.add('active');
+            
+            // Add selection indicator
+            const box = new THREE.Box3().setFromObject(furniture);
+            const size = box.getSize(new THREE.Vector3());
+            const selectionBox = new THREE.Mesh(
+                new THREE.BoxGeometry(size.x + 0.02, size.y + 0.02, size.z + 0.02),
+                new THREE.MeshBasicMaterial({ 
+                    color: 0x00ff00, 
+                    wireframe: true,
+                    opacity: 0.5,
+                    transparent: true
+                })
+            );
+            selectionBox.position.copy(furniture.position);
+            selectionBox.rotation.copy(furniture.rotation);
+            selectionBox.name = 'selectionBox';
+            scene.add(selectionBox);
+        }
+        
+        function deselectFurniture() {
+            selectedFurniture = null;
+            controls.classList.remove('active');
+            colorPicker.classList.remove('active');
+            const selectionBox = scene.getObjectByName('selectionBox');
+            if (selectionBox) scene.remove(selectionBox);
+        }
+        
+        function createFurniture(data) {
+            const group = new THREE.Group();
+            
+            // Main body
+            const geometry = new THREE.BoxGeometry(data.width, data.height, data.depth);
+            const material = new THREE.MeshStandardMaterial({ color: data.color });
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.y = data.height / 2;
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            group.add(mesh);
+            
+            // Add details based on type
+            if (data.id === 'sofa' || data.id === 'chair') {
+                // Backrest
+                const backrest = new THREE.Mesh(
+                    new THREE.BoxGeometry(data.width, data.height * 1.2, data.depth * 0.1),
+                    material.clone()
+                );
+                backrest.position.set(0, data.height * 0.8, -data.depth * 0.45);
+                group.add(backrest);
+                
+                // Arms for sofa
+                if (data.id === 'sofa') {
+                    const armGeom = new THREE.BoxGeometry(data.width * 0.1, data.height * 0.8, data.depth);
+                    [-1, 1].forEach(side => {
+                        const arm = new THREE.Mesh(armGeom, material.clone());
+                        arm.position.set(side * data.width * 0.45, data.height * 0.5, 0);
+                        group.add(arm);
+                    });
+                }
+            }
+            
+            if (data.id === 'table' || data.id === 'desk') {
+                // Legs
+                const legGeom = new THREE.CylinderGeometry(0.03, 0.03, data.height);
+                const positions = [
+                    [-data.width/3, 0, -data.depth/3],
+                    [data.width/3, 0, -data.depth/3],
+                    [-data.width/3, 0, data.depth/3],
+                    [data.width/3, 0, data.depth/3]
+                ];
+                positions.forEach(pos => {
+                    const leg = new THREE.Mesh(legGeom, material.clone());
+                    leg.position.set(pos[0], pos[1] + data.height/2, pos[2]);
+                    group.add(leg);
+                });
+            }
+            
+            if (data.id === 'lamp') {
+                // Lampshade
+                const shade = new THREE.Mesh(
+                    new THREE.ConeGeometry(data.width * 1.5, data.height * 0.4, 8),
+                    new THREE.MeshStandardMaterial({ color: 0xFFFACD })
+                );
+                shade.position.y = data.height * 1.2;
+                group.add(shade);
+                
+                // Add light
+                const light = new THREE.PointLight(0xFFFFCC, 0.5, 2);
+                light.position.y = data.height;
+                group.add(light);
+            }
+            
+            group.userData.furnitureData = data;
+            return group;
+        }
+        
+        async function startAR() {
+            try {
+                log('Checking WebXR support...');
+                startBtn.disabled = true;
+                startBtn.textContent = 'Starting...';
+                
+                if (!navigator.xr) {
+                    throw new Error('WebXR not available. Use Chrome/Edge on Android.');
+                }
+                
+                log('Checking AR session support...');
+                const isSupported = await navigator.xr.isSessionSupported('immersive-ar');
+                if (!isSupported) {
+                    throw new Error('AR not supported on this device.');
+                }
+                
+                log('AR supported! Requesting session...');
+                
+                // Request session with minimal requirements first
+                session = await navigator.xr.requestSession('immersive-ar', {
+                    optionalFeatures: ['hit-test', 'dom-overlay', 'local', 'local-floor', 'bounded-floor', 'unbounded'],
+                    domOverlay: { root: document.getElementById('ui-container') }
+                });
+                
+                log('Session created!');
+                
+                // Hide start screen, show UI
+                startScreen.style.display = 'none';
+                topBar.style.display = 'flex';
+                furnitureMenu.classList.add('active');
+                
+                const canvas = document.getElementById('ar-canvas');
+                const gl = canvas.getContext('webgl', { xrCompatible: true });
+                
+                if (!gl) {
+                    throw new Error('Failed to get WebGL context');
+                }
+                
+                log('Setting up Three.js...');
+                
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera();
+                camera.matrixAutoUpdate = false;
+                
+                renderer = new THREE.WebGLRenderer({
+                    canvas: canvas,
+                    context: gl,
+                    alpha: true,
+                    preserveDrawingBuffer: true,
+                    antialias: true
+                });
+                
+                renderer.autoClear = false;
+                renderer.xr.enabled = true;
+                
+                log('Setting XR session...');
+                await renderer.xr.setSession(session);
+                
+                // Lighting
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+                scene.add(ambientLight);
+                
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                directionalLight.position.set(1, 3, 2);
+                scene.add(directionalLight);
+                
+                // Create reticle
+                reticle = new THREE.Mesh(
+                    new THREE.RingGeometry(0.1, 0.12, 32),
+                    new THREE.MeshBasicMaterial({ 
+                        color: 0x00ff00, 
+                        side: THREE.DoubleSide,
+                        opacity: 0.8,
+                        transparent: true
+                    })
+                );
+                reticle.matrixAutoUpdate = false;
+                reticle.visible = false;
+                scene.add(reticle);
+                
+                log('Creating controller...');
+                
+                // Add controller for tap detection
+                controller = renderer.xr.getController(0);
+                controller.addEventListener('select', onSelect);
+                scene.add(controller);
+                
+                log('Starting render loop...');
+                statusDiv.textContent = 'Point camera at floor';
+                
+                // Handle session end
+                session.addEventListener('end', onSessionEnd);
+                
+                // Animation loop
+                renderer.setAnimationLoop(render);
+                
+            } catch (error) {
+                console.error('AR Error:', error);
+                log('ERROR: ' + error.message);
+                alert('Failed to start AR: ' + error.message);
+                startScreen.style.display = 'flex';
+                startBtn.disabled = false;
+                startBtn.textContent = 'Start Decorating';
+            }
+        }
+        
+        function render(timestamp, frame) {
+            if (!frame) return;
+            
+            const referenceSpace = renderer.xr.getReferenceSpace();
+            const session = renderer.xr.getSession();
+            
+                            // Request hit test source once
+            if (session && !hitTestSourceRequested) {
+                session.requestReferenceSpace('viewer').then((viewerSpace) => {
+                    session.requestHitTestSource({ space: viewerSpace }).then((source) => {
+                        hitTestSource = source;
+                        log('Hit test source created');
+                    }).catch(err => {
+                        log('Hit test not available: ' + err.message);
+                        statusDiv.textContent = 'Hit test unavailable - may not work on this device';
+                    });
+                }).catch(err => {
+                    log('Viewer space error: ' + err.message);
+                });
+                hitTestSourceRequested = true;
+            }
+            
+            // Update reticle position
+            if (hitTestSource) {
+                const hitTestResults = frame.getHitTestResults(hitTestSource);
+                if (hitTestResults.length > 0) {
+                    const hit = hitTestResults[0];
+                    const pose = hit.getPose(referenceSpace);
+                    
+                    if (pose) {
+                        reticle.visible = true;
+                        reticle.matrix.fromArray(pose.transform.matrix);
+                        
+                        statusDiv.textContent = selectedFurnitureType 
+                            ? `Tap to place ${selectedFurnitureType.name}` 
+                            : 'Select furniture below';
+                    }
+                } else {
+                    reticle.visible = false;
+                    statusDiv.textContent = 'Point camera at floor';
+                }
+            }
+            
+            // Update camera
+            const pose = frame.getViewerPose(referenceSpace);
+            if (pose) {
+                const view = pose.views[0];
+                camera.matrix.fromArray(view.transform.matrix);
+                camera.updateMatrixWorld(true);
+                camera.projectionMatrix.fromArray(view.projectionMatrix);
+            }
+            
+            renderer.render(scene, camera);
+        }
+        
+        function onSelect() {
+            if (!reticle.visible) return;
+            
+            if (selectedFurnitureType) {
+                // Place new furniture
+                const furniture = createFurniture(selectedFurnitureType);
+                furniture.matrix.copy(reticle.matrix);
+                furniture.matrix.decompose(furniture.position, furniture.quaternion, furniture.scale);
+                furniture.matrixAutoUpdate = true;
+                scene.add(furniture);
+                placedFurniture.push(furniture);
+                
+                log('Placed: ' + selectedFurnitureType.name);
+                instructions.classList.remove('active');
+            }
+        }
+        
+        function onSessionEnd() {
+            log('Session ended');
+            hitTestSource = null;
+            hitTestSourceRequested = false;
+            session = null;
+            renderer.setAnimationLoop(null);
+            startScreen.style.display = 'flex';
+            topBar.style.display = 'none';
+            furnitureMenu.classList.remove('active');
+            controls.classList.remove('active');
+            placedFurniture = [];
+            selectedFurniture = null;
+            startBtn.disabled = false;
+            startBtn.textContent = 'Start Decorating';
+        }
+        
+        // Button handlers
+        rotateBtn.addEventListener('click', () => {
+            if (selectedFurniture) {
+                selectedFurniture.rotation.y += Math.PI / 4;
+                const selectionBox = scene.getObjectByName('selectionBox');
+                if (selectionBox) selectionBox.rotation.y = selectedFurniture.rotation.y;
+            }
         });
         
-        // Inițializează lista de mobilier
-        function initFurnitureList() {
-            updateFurnitureList();
-        }
-        
-        // Actualizează lista de mobilier în UI
-        function updateFurnitureList() {
-            const list = document.getElementById('furnitureList');
-            list.innerHTML = '';
-            
-            furnitureItems.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = 'furniture-config-item';
-                div.innerHTML = `
-                    <div class="furniture-config-header">
-                        <strong>${item.type}</strong>
-                        <button class="remove-furniture" data-index="${index}">
-                            <i class="fas fa-times"></i> Elimină
-                        </button>
-                    </div>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px;">
-                        <div>
-                            <label>Poziție X</label>
-                            <input type="number" class="furniture-pos-x" data-index="${index}" value="${item.position.x}" step="0.1" min="0">
-                        </div>
-                        <div>
-                            <label>Poziție Y</label>
-                            <input type="number" class="furniture-pos-y" data-index="${index}" value="${item.position.y}" step="0.1" min="0">
-                        </div>
-                        <div>
-                            <label>Lungime</label>
-                            <input type="number" class="furniture-length" data-index="${index}" value="${item.dimensions.length}" step="0.1" min="0">
-                        </div>
-                        <div>
-                            <label>Lățime</label>
-                            <input type="number" class="furniture-width" data-index="${index}" value="${item.dimensions.width}" step="0.1" min="0">
-                        </div>
-                        <div>
-                            <label>Înălțime</label>
-                            <input type="number" class="furniture-height" data-index="${index}" value="${item.height}" step="0.1" min="0">
-                        </div>
-                    </div>
-                `;
-                list.appendChild(div);
-            });
-            
-            // Adaugă event listeners pentru input-urile de mobilier
-            document.querySelectorAll('.remove-furniture').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const index = parseInt(this.dataset.index);
-                    furnitureItems.splice(index, 1);
-                    updateFurnitureList();
-                    updateRoomPreview();
-                    generateJSON();
-                });
-            });
-            
-            document.querySelectorAll('.furniture-pos-x, .furniture-pos-y, .furniture-length, .furniture-width, .furniture-height').forEach(input => {
-                input.addEventListener('input', function() {
-                    const index = parseInt(this.dataset.index);
-                    const field = this.className.replace('furniture-', '');
-                    
-                    if (field === 'pos-x') {
-                        furnitureItems[index].position.x = parseFloat(this.value);
-                    } else if (field === 'pos-y') {
-                        furnitureItems[index].position.y = parseFloat(this.value);
-                    } else if (field === 'length') {
-                        furnitureItems[index].dimensions.length = parseFloat(this.value);
-                    } else if (field === 'width') {
-                        furnitureItems[index].dimensions.width = parseFloat(this.value);
-                    } else if (field === 'height') {
-                        furnitureItems[index].height = parseFloat(this.value);
-                    }
-                    
-                    updateRoomPreview();
-                    generateJSON();
-                });
-            });
-        }
-        
-        // Inițializează event listeners
-        function initEventListeners() {
-            // Controale design
-            document.getElementById('roomType').addEventListener('change', updateRoomPreview);
-            document.getElementById('style').addEventListener('change', updateRoomPreview);
-            document.getElementById('roomId').addEventListener('input', updateRoomPreview);
-            document.getElementById('roomName').addEventListener('input', updateRoomPreview);
-            document.getElementById('lighting').addEventListener('change', updateRoomPreview);
-            document.getElementById('description').addEventListener('input', updateRoomPreview);
-            document.getElementById('roomLength').addEventListener('input', updateRoomPreview);
-            document.getElementById('roomWidth').addEventListener('input', updateRoomPreview);
-            document.getElementById('roomHeight').addEventListener('input', updateRoomPreview);
-            document.getElementById('roomShape').addEventListener('change', updateRoomPreview);
-            
-            // Buton adăugare mobilier
-            document.getElementById('addFurnitureBtn').addEventListener('click', addFurniture);
-            
-            // Butoane acțiuni
-            document.getElementById('copyBtn').addEventListener('click', copyJSON);
-            document.getElementById('generateBtn').addEventListener('click', generateJSON);
-        }
-        
-        // Adaugă mobilier nou
-        function addFurniture() {
-            const type = document.getElementById('newFurnitureType').value;
-            const template = furnitureTemplates[type];
-            
-            if (template) {
-                // Generează o poziție unică
-                const newPosition = {
-                    x: parseFloat((Math.random() * 2).toFixed(1)),
-                    y: parseFloat((Math.random() * 2).toFixed(1))
-                };
-                
-                furnitureItems.push({
-                    type: type,
-                    ifc_class: template.ifc_class,
-                    position: newPosition,
-                    dimensions: { ...template.dimensions },
-                    height: template.height
-                });
-                
-                updateFurnitureList();
-                updateRoomPreview();
-                generateJSON();
+        colorBtn.addEventListener('click', () => {
+            if (selectedFurniture) {
+                colorPicker.classList.toggle('active');
             }
-        }
+        });
         
-        // Actualizează previzualizarea camerei
-        function updateRoomPreview() {
-            const roomType = document.getElementById('roomType').value;
-            const style = document.getElementById('style').value;
-            const roomId = document.getElementById('roomId').value;
-            const roomName = document.getElementById('roomName').value;
-            const length = document.getElementById('roomLength').value;
-            const width = document.getElementById('roomWidth').value;
-            const height = document.getElementById('roomHeight').value;
-            const shape = document.getElementById('roomShape').value;
-            
-            // Actualizează iconița
-            document.getElementById('roomIcon').className = `fas ${roomIcons[roomType]} room-icon`;
-            
-            // Actualizează titlul
-            const roomNames = {
-                'living': 'Living',
-                'bedroom': 'Dormitor',
-                'kitchen': 'Bucătărie',
-                'bathroom': 'Baie',
-                'office': 'Birou',
-                'dining': 'Sufragerie'
-            };
-            
-            const styleNames = {
-                'modern': 'Modern',
-                'classical': 'Clasic',
-                'scandinavian': 'Scandinavian',
-                'industrial': 'Industrial',
-                'bohemian': 'Bohemian',
-                'traditional': 'Traditional',
-                'minimalist': 'Minimalist'
-            };
-            
-            document.getElementById('roomTitle').textContent = 
-                `${roomNames[roomType]} ${styleNames[style]}`;
-            
-            // Actualizează detaliile
-            document.getElementById('roomDetails').innerHTML = `
-                <div class="detail-item">
-                    <strong>ID:</strong> ${roomId}
-                </div>
-                <div class="detail-item">
-                    <strong>Dimensiuni:</strong> ${length}m × ${width}m × ${height}m
-                </div>
-                <div class="detail-item">
-                    <strong>Formă:</strong> ${shape}
-                </div>
-                <div class="detail-item">
-                    <strong>Mobilier:</strong> ${furnitureItems.length} elemente
-                </div>
-                <div class="detail-item">
-                    <strong>Stil:</strong> ${styleNames[style]}
-                </div>
-                <div class="detail-item">
-                    <strong>Iluminat:</strong> ${document.getElementById('lighting').value}
-                </div>
-            `;
-        }
-        
-        // Generează JSON-ul
-        function generateJSON() {
-            const roomType = document.getElementById('roomType').value;
-            const style = document.getElementById('style').value;
-            const roomId = document.getElementById('roomId').value;
-            const roomName = document.getElementById('roomName').value;
-            const description = document.getElementById('description').value;
-            const length = parseFloat(document.getElementById('roomLength').value);
-            const width = parseFloat(document.getElementById('roomWidth').value);
-            const height = parseFloat(document.getElementById('roomHeight').value);
-            const shape = document.getElementById('roomShape').value;
-            const lighting = document.getElementById('lighting').value;
-            
-            // Construiește obiectul JSON
-            const jsonConfig = {
-                project_information: {
-                    schema: "IFC-aligned spatial configuration",
-                    version: "1.0",
-                    unit: "meters"
-                },
-                space: {
-                    id: roomId,
-                    name: roomName,
-                    description: description,
-                    shape: shape,
-                    dimensions: {
-                        length: length,
-                        width: width,
-                        height: height
-                    },
-                    style: style,
-                    furniture_placement_requirements: [
-                        "All objects must be positioned exactly according to provided coordinates",
-                        "All objects must maintain exact specified dimensions",
-                        "Rotation values must be applied precisely where specified",
-                        "Object positions are relative to room origin (0,0) at bottom-left corner"
-                    ],
-                    furniture: furnitureItems.map(item => ({
-                        type: item.type,
-                        ifc_class: item.ifc_class,
-                        position: item.position,
-                        dimensions: item.dimensions,
-                        height: item.height
-                    })),
-                    metadata: {
-                        lighting: lighting,
-                        coordinate_system: "Cartesian (x,y) with origin at room corner",
-                        scale: "1 unit = 1 meter"
-                    }
-                },
-                visualization_instructions: {
-                    task: `Generate a photorealistic 3D rendering of ${roomId}`,
-                    requirements: [
-                        "Viewpoint showing overall room layout",
-                        "Maintain exact spatial positioning of all objects as specified",
-                        "Maintain precise dimensional accuracy of all objects",
-                        `Apply ${style} architectural style consistently`,
-                        `Ensure ${lighting} lighting conditions as specified`
-                    ]
-                }
-            };
-            
-            // Formatează și afișează JSON-ul
-            const jsonString = JSON.stringify(jsonConfig, null, 2);
-            const formattedJSON = syntaxHighlight(jsonString);
-            document.getElementById('promptDisplay').innerHTML = formattedJSON;
-            
-            // Salvează în istoric
-            saveToHistory(jsonConfig);
-            
-            return jsonConfig;
-        }
-        
-        // Evidențierea sintaxei JSON
-        function syntaxHighlight(json) {
-            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-                let cls = 'json-number';
-                if (/^"/.test(match)) {
-                    if (/:$/.test(match)) {
-                        cls = 'json-key';
-                    } else {
-                        cls = 'json-string';
-                    }
-                } else if (/true|false/.test(match)) {
-                    cls = 'json-boolean';
-                } else if (/null/.test(match)) {
-                    cls = 'json-null';
-                }
-                return '<span class="' + cls + '">' + match + '</span>';
-            });
-        }
-        
-        // Copiază JSON în clipboard
-        async function copyJSON() {
-            const jsonString = JSON.stringify(JSON.parse(document.getElementById('promptDisplay').textContent || document.getElementById('promptDisplay').innerText), null, 2);
-            
-            try {
-                await navigator.clipboard.writeText(jsonString);
-                showNotification('JSON copiat în clipboard!');
-            } catch (err) {
-                // Fallback pentru browsere vechi
-                const textArea = document.createElement('textarea');
-                textArea.value = jsonString;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showNotification('JSON copiat în clipboard!');
+        deleteBtn.addEventListener('click', () => {
+            if (selectedFurniture) {
+                scene.remove(selectedFurniture);
+                placedFurniture = placedFurniture.filter(f => f !== selectedFurniture);
+                deselectFurniture();
             }
-        }
+        });
         
-        // Afișează notificare
-        function showNotification(message, type = 'success') {
-            const notification = document.getElementById('notification');
-            const icon = notification.querySelector('i');
-            const text = notification.querySelector('span');
-            
-            text.textContent = message;
-            
-            if (type === 'warning') {
-                notification.style.background = '#ffc107';
-                icon.className = 'fas fa-exclamation-triangle';
-            } else {
-                notification.style.background = 'var(--primary)';
-                icon.className = 'fas fa-check-circle';
-            }
-            
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
+        exitBtn.addEventListener('click', () => {
+            if (session) session.end();
+        });
         
-        // Salvează configurație în istoric
-        function saveToHistory(jsonConfig) {
-            const historyItem = {
-                id: Date.now(),
-                name: jsonConfig.space.name,
-                roomId: jsonConfig.space.id,
-                style: jsonConfig.space.style,
-                furnitureCount: jsonConfig.space.furniture.length,
-                timestamp: new Date().toISOString(),
-                date: new Date().toLocaleDateString('ro-RO'),
-                config: jsonConfig
-            };
-            
-            // Adaugă la începutul listei
-            promptHistory.unshift(historyItem);
-            
-            // Păstrează maxim 8 intrări
-            if (promptHistory.length > 8) {
-                promptHistory = promptHistory.slice(0, 8);
-            }
-            
-            // Salvează în localStorage
-            localStorage.setItem('roomJSONHistory', JSON.stringify(promptHistory));
-            
-            // Actualizează UI
-            updateHistoryPanel();
-        }
+        startBtn.addEventListener('click', startAR);
         
-        // Actualizează panoul de istoric
-        function updateHistoryPanel() {
-            const historyList = document.getElementById('historyList');
-            const historyPanel = document.getElementById('historyPanel');
-            
-            if (promptHistory.length === 0) {
-                historyPanel.style.display = 'none';
-                return;
-            }
-            
-            historyPanel.style.display = 'block';
-            historyList.innerHTML = '';
-            
-            promptHistory.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'history-item';
-                div.innerHTML = `
-                    <strong>${item.roomId} - ${item.name}</strong>
-                    <p style="margin: 5px 0; font-size: 0.85rem; color: var(--gray);">
-                        Stil: ${item.style} | Mobilier: ${item.furnitureCount} elemente
-                    </p>
-                    <small><i class="far fa-clock"></i> ${item.date}</small>
-                `;
-                
-                div.addEventListener('click', () => {
-                    loadFromHistory(item);
-                    showNotification('Configurație încărcată din istoric!');
-                });
-                
-                historyList.appendChild(div);
-            });
-        }
+        // Initialize
+        log('Initializing app...');
+        initFurnitureMenu();
+        initColorPicker();
+        log('Ready!');
         
-        // Încarcă configurație din istoric
-        function loadFromHistory(item) {
-            const config = item.config;
-            
-            // Setează valorile din configurație
-            document.getElementById('roomType').value = getKeyByValue(roomIcons, config.space.id.includes('bedroom') ? 'fas fa-bed' : 
-                config.space.id.includes('living') ? 'fas fa-couch' : 
-                config.space.id.includes('kitchen') ? 'fas fa-utensils' : 'fas fa-bed');
-            
-            document.getElementById('style').value = config.space.style;
-            document.getElementById('roomId').value = config.space.id;
-            document.getElementById('roomName').value = config.space.name;
-            document.getElementById('description').value = config.space.description;
-            document.getElementById('roomLength').value = config.space.dimensions.length;
-            document.getElementById('roomWidth').value = config.space.dimensions.width;
-            document.getElementById('roomHeight').value = config.space.dimensions.height;
-            document.getElementById('roomShape').value = config.space.shape;
-            document.getElementById('lighting').value = config.space.metadata.lighting;
-            
-            // Actualizează mobilierele
-            furnitureItems = config.space.furniture;
-            updateFurnitureList();
-            
-            // Actualizează previzualizarea și generează JSON
-            updateRoomPreview();
-            generateJSON();
-        }
-        
-        // Funcție helper pentru a obține cheia după valoare
-        function getKeyByValue(object, value) {
-            return Object.keys(object).find(key => object[key] === value);
-        }
     </script>
 </body>
 </html>
