@@ -341,29 +341,141 @@
             }
         }
         
-        // Furniture catalog
+        // Enhanced furniture catalog with realistic dimensions
         const furnitureData = [
-            { id: 'sofa', name: 'Sofa', icon: '🛋️', width: 0.8, height: 0.4, depth: 0.4, color: 0x8B7355 },
-            { id: 'chair', name: 'Chair', icon: '🪑', width: 0.4, height: 0.5, depth: 0.4, color: 0x654321 },
-            { id: 'table', name: 'Table', icon: '🪑', width: 0.6, height: 0.4, depth: 0.6, color: 0x8B4513 },
-            { id: 'bed', name: 'Bed', icon: '🛏️', width: 1.0, height: 0.3, depth: 0.8, color: 0xFFFFFF },
-            { id: 'desk', name: 'Desk', icon: '🖥️', width: 0.7, height: 0.4, depth: 0.4, color: 0x8B7355 },
-            { id: 'shelf', name: 'Shelf', icon: '📚', width: 0.6, height: 0.8, depth: 0.2, color: 0x654321 },
-            { id: 'lamp', name: 'Lamp', icon: '💡', width: 0.15, height: 0.5, depth: 0.15, color: 0xFFD700 },
-            { id: 'plant', name: 'Plant', icon: '🪴', width: 0.2, height: 0.4, depth: 0.2, color: 0x228B22 },
-            { id: 'tv', name: 'TV Stand', icon: '📺', width: 0.7, height: 0.4, depth: 0.3, color: 0x2F4F4F },
-            { id: 'rug', name: 'Rug', icon: '🟫', width: 1.2, height: 0.01, depth: 0.8, color: 0x8B4513 }
+            { 
+                id: 'sofa', 
+                name: 'Modern Sofa', 
+                icon: '🛋️', 
+                width: 2.0, 
+                height: 0.8, 
+                depth: 0.9, 
+                color: 0x8B7355,
+                fabric: true
+            },
+            { 
+                id: 'armchair', 
+                name: 'Armchair', 
+                icon: '🪑', 
+                width: 0.85, 
+                height: 1.0, 
+                depth: 0.9, 
+                color: 0x654321,
+                fabric: true
+            },
+            { 
+                id: 'dining_table', 
+                name: 'Dining Table', 
+                icon: '🍽️', 
+                width: 1.4, 
+                height: 0.75, 
+                depth: 0.9, 
+                color: 0x8B4513,
+                wood: true
+            },
+            { 
+                id: 'king_bed', 
+                name: 'King Bed', 
+                icon: '🛏️', 
+                width: 2.0, 
+                height: 0.5, 
+                depth: 2.1, 
+                color: 0xFFFFFF,
+                fabric: true
+            },
+            { 
+                id: 'office_desk', 
+                name: 'Office Desk', 
+                icon: '💼', 
+                width: 1.6, 
+                height: 0.75, 
+                depth: 0.8, 
+                color: 0x4A3728,
+                wood: true
+            },
+            { 
+                id: 'bookshelf', 
+                name: 'Bookshelf', 
+                icon: '📚', 
+                width: 0.9, 
+                height: 2.0, 
+                depth: 0.35, 
+                color: 0x654321,
+                wood: true
+            },
+            { 
+                id: 'floor_lamp', 
+                name: 'Floor Lamp', 
+                icon: '💡', 
+                width: 0.25, 
+                height: 2.0, 
+                depth: 0.25, 
+                color: 0x2F4F4F,
+                metal: true
+            },
+            { 
+                id: 'fiddle_leaf', 
+                name: 'Fiddle Leaf', 
+                icon: '🪴', 
+                width: 0.5, 
+                height: 1.8, 
+                depth: 0.5, 
+                color: 0x228B22,
+                plant: true
+            },
+            { 
+                id: 'entertainment_center', 
+                name: 'TV Stand', 
+                icon: '📺', 
+                width: 1.8, 
+                height: 0.6, 
+                depth: 0.45, 
+                color: 0x333333,
+                wood: true
+            },
+            { 
+                id: 'persian_rug', 
+                name: 'Persian Rug', 
+                icon: '🟫', 
+                width: 2.0, 
+                height: 0.02, 
+                depth: 1.4, 
+                color: 0x8B4513,
+                fabric: true
+            },
+            { 
+                id: 'coffee_table', 
+                name: 'Coffee Table', 
+                icon: '☕', 
+                width: 1.0, 
+                height: 0.4, 
+                depth: 0.6, 
+                color: 0x4A3728,
+                wood: true
+            },
+            { 
+                id: 'dresser', 
+                name: 'Dresser', 
+                icon: '👔', 
+                width: 1.2, 
+                height: 0.9, 
+                depth: 0.5, 
+                color: 0x8B7355,
+                wood: true
+            }
         ];
         
         const colors = [
-            { name: 'Brown', value: 0x8B4513 },
-            { name: 'White', value: 0xFFFFFF },
-            { name: 'Black', value: 0x2F4F4F },
+            { name: 'Walnut', value: 0x4A3728 },
+            { name: 'Oak', value: 0x8B7355 },
+            { name: 'White', value: 0xF5F5F5 },
+            { name: 'Charcoal', value: 0x2F4F4F },
             { name: 'Gray', value: 0x808080 },
-            { name: 'Red', value: 0xDC143C },
-            { name: 'Blue', value: 0x4169E1 },
-            { name: 'Green', value: 0x228B22 },
-            { name: 'Yellow', value: 0xFFD700 }
+            { name: 'Navy', value: 0x2C3E50 },
+            { name: 'Emerald', value: 0x2ECC71 },
+            { name: 'Terracotta', value: 0xE67E22 },
+            { name: 'Blush', value: 0xFFB6C1 },
+            { name: 'Teal', value: 0x1ABC9C }
         ];
         
         // State
@@ -391,6 +503,59 @@
         const colorBtn = document.getElementById('color-btn');
         const deleteBtn = document.getElementById('delete-btn');
         const colorPicker = document.getElementById('color-picker');
+        
+        // Material creation functions
+        function createWoodMaterial(color) {
+            return new THREE.MeshStandardMaterial({
+                color: color,
+                roughness: 0.7,
+                metalness: 0.2,
+                bumpScale: 0.002
+            });
+        }
+        
+        function createFabricMaterial(color) {
+            return new THREE.MeshStandardMaterial({
+                color: color,
+                roughness: 0.9,
+                metalness: 0.0
+            });
+        }
+        
+        function createMetalMaterial(color) {
+            return new THREE.MeshStandardMaterial({
+                color: color,
+                roughness: 0.3,
+                metalness: 0.8
+            });
+        }
+        
+        function createLeatherMaterial(color) {
+            return new THREE.MeshStandardMaterial({
+                color: color,
+                roughness: 0.5,
+                metalness: 0.1
+            });
+        }
+        
+        function createGlassMaterial() {
+            return new THREE.MeshPhysicalMaterial({
+                color: 0xffffff,
+                transmission: 0.9,
+                roughness: 0.1,
+                thickness: 0.01,
+                transparent: true,
+                opacity: 0.8
+            });
+        }
+        
+        function createPlantMaterial(color) {
+            return new THREE.MeshStandardMaterial({
+                color: color,
+                roughness: 0.8,
+                metalness: 0.0
+            });
+        }
         
         // Initialize furniture menu
         function initFurnitureMenu() {
@@ -432,6 +597,18 @@
             selectedFurniture.traverse(child => {
                 if (child.isMesh && child.material) {
                     child.material.color.setHex(colorValue);
+                    
+                    // Update material properties based on new color
+                    if (selectedFurniture.userData.furnitureData.wood) {
+                        child.material.roughness = 0.7;
+                        child.material.metalness = 0.2;
+                    } else if (selectedFurniture.userData.furnitureData.fabric) {
+                        child.material.roughness = 0.9;
+                        child.material.metalness = 0.0;
+                    } else if (selectedFurniture.userData.furnitureData.metal) {
+                        child.material.roughness = 0.3;
+                        child.material.metalness = 0.8;
+                    }
                 }
             });
             
@@ -460,9 +637,23 @@
             selectionBox.rotation.copy(furniture.rotation);
             selectionBox.name = 'selectionBox';
             scene.add(selectionBox);
+            
+            // Highlight selected furniture with a subtle outline
+            furniture.traverse(child => {
+                if (child.isMesh) {
+                    child.material.emissive = new THREE.Color(0x111111);
+                }
+            });
         }
         
         function deselectFurniture() {
+            if (selectedFurniture) {
+                selectedFurniture.traverse(child => {
+                    if (child.isMesh) {
+                        child.material.emissive = new THREE.Color(0x000000);
+                    }
+                });
+            }
             selectedFurniture = null;
             controls.classList.remove('active');
             colorPicker.classList.remove('active');
@@ -473,69 +664,604 @@
         function createFurniture(data) {
             const group = new THREE.Group();
             
-            // Main body
-            const geometry = new THREE.BoxGeometry(data.width, data.height, data.depth);
+            switch(data.id) {
+                case 'sofa':
+                    createModernSofa(group, data);
+                    break;
+                case 'armchair':
+                    createArmchair(group, data);
+                    break;
+                case 'dining_table':
+                    createDiningTable(group, data);
+                    break;
+                case 'king_bed':
+                    createKingBed(group, data);
+                    break;
+                case 'office_desk':
+                    createOfficeDesk(group, data);
+                    break;
+                case 'bookshelf':
+                    createBookshelf(group, data);
+                    break;
+                case 'floor_lamp':
+                    createFloorLamp(group, data);
+                    break;
+                case 'fiddle_leaf':
+                    createFiddleLeafPlant(group, data);
+                    break;
+                case 'entertainment_center':
+                    createEntertainmentCenter(group, data);
+                    break;
+                case 'persian_rug':
+                    createPersianRug(group, data);
+                    break;
+                case 'coffee_table':
+                    createCoffeeTable(group, data);
+                    break;
+                case 'dresser':
+                    createDresser(group, data);
+                    break;
+                default:
+                    createBasicFurniture(group, data);
+            }
+            
+            group.userData.furnitureData = data;
+            
+            // Add click detection
+            group.traverse(child => {
+                if (child.isMesh) {
+                    child.userData.selectable = true;
+                    child.userData.parentGroup = group;
+                }
+            });
+            
+            return group;
+        }
+        
+        function createModernSofa(group, data) {
+            const material = createFabricMaterial(data.color);
+            const legMaterial = createMetalMaterial(0x2F4F4F);
+            
+            // Main seat cushion
+            const seat = new THREE.Mesh(
+                new THREE.BoxGeometry(data.width * 0.95, data.height * 0.4, data.depth * 0.9),
+                material
+            );
+            seat.position.set(0, data.height * 0.2, 0);
+            group.add(seat);
+            
+            // Back cushion
+            const back = new THREE.Mesh(
+                new THREE.BoxGeometry(data.width * 0.95, data.height * 0.6, data.depth * 0.15),
+                material
+            );
+            back.position.set(0, data.height * 0.7, -data.depth * 0.375);
+            group.add(back);
+            
+            // Armrests
+            const armrestGeometry = new THREE.BoxGeometry(data.width * 0.1, data.height * 0.8, data.depth * 0.8);
+            [-1, 1].forEach(side => {
+                const armrest = new THREE.Mesh(armrestGeometry, material);
+                armrest.position.set(side * data.width * 0.425, data.height * 0.4, 0);
+                group.add(armrest);
+            });
+            
+            // Legs
+            const legPositions = [
+                [-data.width/2.5, 0, -data.depth/3],
+                [data.width/2.5, 0, -data.depth/3],
+                [-data.width/2.5, 0, data.depth/3],
+                [data.width/2.5, 0, data.depth/3]
+            ];
+            legPositions.forEach(pos => {
+                const leg = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.03, 0.03, data.height * 0.2, 8),
+                    legMaterial
+                );
+                leg.position.set(pos[0], pos[1] + data.height * 0.1, pos[2]);
+                group.add(leg);
+            });
+            
+            // Throw pillows
+            for(let i = 0; i < 3; i++) {
+                const pillow = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.3, 0.15, 0.3),
+                    createFabricMaterial(0xE67E22 + i * 0x111111)
+                );
+                pillow.position.set(
+                    -data.width/4 + (i * data.width/4),
+                    data.height * 0.4,
+                    data.depth * 0.15
+                );
+                pillow.rotation.y = Math.PI/4 * i;
+                group.add(pillow);
+            }
+        }
+        
+        function createArmchair(group, data) {
+            const material = createLeatherMaterial(data.color);
+            const legMaterial = createWoodMaterial(0x4A3728);
+            
+            // Seat
+            const seat = new THREE.Mesh(
+                new THREE.BoxGeometry(data.width, data.height * 0.4, data.depth),
+                material
+            );
+            seat.position.set(0, data.height * 0.2, 0);
+            group.add(seat);
+            
+            // Back
+            const back = new THREE.Mesh(
+                new THREE.BoxGeometry(data.width, data.height * 0.8, data.depth * 0.15),
+                material
+            );
+            back.position.set(0, data.height * 0.8, -data.depth * 0.425);
+            group.add(back);
+            
+            // Armrests
+            const armrestGeometry = new THREE.BoxGeometry(data.width * 0.15, data.height * 0.6, data.depth * 0.8);
+            [-1, 1].forEach(side => {
+                const armrest = new THREE.Mesh(armrestGeometry, material);
+                armrest.position.set(side * data.width * 0.425, data.height * 0.3, data.depth * 0.1);
+                group.add(armrest);
+            });
+            
+            // Legs
+            const legGeometry = new THREE.CylinderGeometry(0.04, 0.04, data.height * 0.25, 8);
+            const legPositions = [
+                [-data.width/3, 0, -data.depth/3],
+                [data.width/3, 0, -data.depth/3],
+                [-data.width/3, 0, data.depth/3],
+                [data.width/3, 0, data.depth/3]
+            ];
+            legPositions.forEach(pos => {
+                const leg = new THREE.Mesh(legGeometry, legMaterial);
+                leg.position.set(pos[0], pos[1] + data.height * 0.125, pos[2]);
+                group.add(leg);
+            });
+        }
+        
+        function createDiningTable(group, data) {
+            const tableTopMaterial = createWoodMaterial(data.color);
+            const legMaterial = createWoodMaterial(0x4A3728);
+            
+            // Table top
+            const tableTop = new THREE.Mesh(
+                new THREE.BoxGeometry(data.width, data.height * 0.1, data.depth),
+                tableTopMaterial
+            );
+            tableTop.position.set(0, data.height, 0);
+            group.add(tableTop);
+            
+            // Legs
+            const legGeometry = new THREE.CylinderGeometry(0.06, 0.08, data.height * 0.9, 8);
+            const legPositions = [
+                [-data.width/3, data.height * 0.45, -data.depth/3],
+                [data.width/3, data.height * 0.45, -data.depth/3],
+                [-data.width/3, data.height * 0.45, data.depth/3],
+                [data.width/3, data.height * 0.45, data.depth/3]
+            ];
+            legPositions.forEach(pos => {
+                const leg = new THREE.Mesh(legGeometry, legMaterial);
+                leg.position.set(pos[0], pos[1], pos[2]);
+                group.add(leg);
+            });
+            
+            // Table stretcher
+            const stretcher = new THREE.Mesh(
+                new THREE.BoxGeometry(data.width * 0.7, data.height * 0.08, data.depth * 0.08),
+                legMaterial
+            );
+            stretcher.position.set(0, data.height * 0.2, 0);
+            group.add(stretcher);
+        }
+        
+        function createKingBed(group, data) {
+            const mattressMaterial = createFabricMaterial(data.color);
+            const frameMaterial = createWoodMaterial(0x4A3728);
+            
+            // Mattress
+            const mattress = new THREE.Mesh(
+                new THREE.BoxGeometry(data.width, data.height * 0.4, data.depth * 0.9),
+                mattressMaterial
+            );
+            mattress.position.set(0, data.height * 0.2, 0);
+            group.add(mattress);
+            
+            // Bed frame
+            const frame = new THREE.Mesh(
+                new THREE.BoxGeometry(data.width * 1.05, data.height * 0.2, data.depth * 0.95),
+                frameMaterial
+            );
+            frame.position.set(0, 0, 0);
+            group.add(frame);
+            
+            // Headboard
+            const headboard = new THREE.Mesh(
+                new THREE.BoxGeometry(data.width, data.height * 0.8, data.depth * 0.1),
+                frameMaterial
+            );
+            headboard.position.set(0, data.height * 0.6, -data.depth * 0.425);
+            group.add(headboard);
+            
+            // Pillows
+            for(let i = 0; i < 2; i++) {
+                const pillow = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.6, 0.15, 0.4),
+                    createFabricMaterial(0xF5F5F5)
+                );
+                pillow.position.set(
+                    -data.width/4 + (i * data.width/2),
+                    data.height * 0.4,
+                    data.depth * 0.2
+                );
+                group.add(pillow);
+            }
+            
+            // Nightstands
+            const nightstandMaterial = createWoodMaterial(0x8B7355);
+            [-1, 1].forEach(side => {
+                const nightstand = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.4, data.height * 0.6, 0.4),
+                    nightstandMaterial
+                );
+                nightstand.position.set(side * (data.width/2 + 0.25), data.height * 0.3, -data.depth * 0.3);
+                group.add(nightstand);
+                
+                // Nightstand top
+                const top = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.45, data.height * 0.05, 0.45),
+                    nightstandMaterial
+                );
+                top.position.set(side * (data.width/2 + 0.25), data.height * 0.625, -data.depth * 0.3);
+                group.add(top);
+            });
+        }
+        
+        function createOfficeDesk(group, data) {
+            const desktopMaterial = createWoodMaterial(data.color);
+            const legMaterial = createMetalMaterial(0x2F4F4F);
+            
+            // Desktop
+            const desktop = new THREE.Mesh(
+                new THREE.BoxGeometry(data.width, data.height * 0.05, data.depth),
+                desktopMaterial
+            );
+            desktop.position.set(0, data.height, 0);
+            group.add(desktop);
+            
+            // Drawers
+            const drawer = new THREE.Mesh(
+                new THREE.BoxGeometry(data.width * 0.6, data.height * 0.8, data.depth * 0.7),
+                desktopMaterial
+            );
+            drawer.position.set(0, data.height * 0.4, data.depth * 0.15);
+            group.add(drawer);
+            
+            // Drawer handles
+            const handleMaterial = createMetalMaterial(0x888888);
+            for(let i = 0; i < 3; i++) {
+                const handle = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.15, 0.02, 0.04),
+                    handleMaterial
+                );
+                handle.position.set(
+                    0,
+                    data.height * 0.3 + (i * data.height * 0.25),
+                    data.depth * 0.51
+                );
+                group.add(handle);
+            }
+            
+            // Legs
+            const legPositions = [
+                [-data.width/2.5, data.height * 0.5, -data.depth/2.5],
+                [data.width/2.5, data.height * 0.5, -data.depth/2.5]
+            ];
+            legPositions.forEach(pos => {
+                const leg = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.04, 0.04, data.height, 8),
+                    legMaterial
+                );
+                leg.position.set(pos[0], pos[1], pos[2]);
+                group.add(leg);
+            });
+        }
+        
+        function createBookshelf(group, data) {
+            const material = createWoodMaterial(data.color);
+            
+            // Main frame
+            const frame = new THREE.Mesh(
+                new THREE.BoxGeometry(data.width, data.height, data.depth),
+                material
+            );
+            group.add(frame);
+            
+            // Shelves
+            for(let i = 1; i < 5; i++) {
+                const shelf = new THREE.Mesh(
+                    new THREE.BoxGeometry(data.width * 0.95, data.height * 0.03, data.depth * 0.9),
+                    material
+                );
+                shelf.position.set(0, -data.height/2 + i * (data.height/4.5), 0);
+                group.add(shelf);
+            }
+            
+            // Books
+            const bookColors = [0xDC143C, 0x4169E1, 0x228B22, 0xFFD700, 0x8A2BE2];
+            for(let i = 0; i < 12; i++) {
+                const row = Math.floor(i / 4);
+                const col = i % 4;
+                const book = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.2, 0.02 + Math.random() * 0.05, 0.12),
+                    createFabricMaterial(bookColors[Math.floor(Math.random() * bookColors.length)])
+                );
+                book.position.set(
+                    -data.width/3 + col * 0.22,
+                    -data.height/2.5 + (row + 1) * (data.height/4.5),
+                    data.depth * 0.1
+                );
+                book.rotation.z = (Math.random() - 0.5) * 0.1;
+                group.add(book);
+            }
+        }
+        
+        function createFloorLamp(group, data) {
+            const baseMaterial = createMetalMaterial(0x2F4F4F);
+            const poleMaterial = createMetalMaterial(0x666666);
+            const shadeMaterial = createFabricMaterial(0xF5F5F5);
+            
+            // Base
+            const base = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.15, 0.15, 0.08, 16),
+                baseMaterial
+            );
+            base.position.set(0, 0.04, 0);
+            group.add(base);
+            
+            // Pole
+            const pole = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.02, 0.02, data.height * 0.9, 8),
+                poleMaterial
+            );
+            pole.position.set(0, data.height * 0.45, 0);
+            group.add(pole);
+            
+            // Shade
+            const shade = new THREE.Mesh(
+                new THREE.ConeGeometry(0.3, 0.4, 16),
+                shadeMaterial
+            );
+            shade.position.set(0, data.height * 0.9, 0);
+            shade.rotation.x = Math.PI;
+            group.add(shade);
+            
+            // Add light
+            const light = new THREE.PointLight(0xFFFFCC, 1.5, 3);
+            light.position.set(0, data.height * 0.85, 0);
+            group.add(light);
+        }
+        
+        function createFiddleLeafPlant(group, data) {
+            const potMaterial = createClayMaterial(0x8B4513);
+            const stemMaterial = createWoodMaterial(0x654321);
+            const leafMaterial = createPlantMaterial(0x228B22);
+            
+            // Pot
+            const pot = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.2, 0.25, 0.3, 16),
+                potMaterial
+            );
+            pot.position.set(0, 0.15, 0);
+            group.add(pot);
+            
+            // Soil
+            const soil = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.18, 0.18, 0.05, 16),
+                createPlantMaterial(0x5D4037)
+            );
+            soil.position.set(0, 0.325, 0);
+            group.add(soil);
+            
+            // Main stem
+            const stem = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.03, 0.04, data.height * 0.7, 8),
+                stemMaterial
+            );
+            stem.position.set(0, 0.5 + data.height * 0.35, 0);
+            group.add(stem);
+            
+            // Leaves
+            for(let i = 0; i < 8; i++) {
+                const leafHeight = 0.7 + (i * 0.15);
+                const leaf = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.2, 8, 8, 0, Math.PI),
+                    leafMaterial
+                );
+                leaf.position.set(
+                    (Math.random() - 0.5) * 0.3,
+                    leafHeight,
+                    (Math.random() - 0.5) * 0.3
+                );
+                leaf.rotation.x = Math.PI/2;
+                leaf.rotation.y = Math.random() * Math.PI * 2;
+                leaf.scale.set(1, 0.6 + Math.random() * 0.4, 0.8);
+                group.add(leaf);
+            }
+        }
+        
+        function createEntertainmentCenter(group, data) {
+            const material = createWoodMaterial(data.color);
+            const shelfMaterial = createWoodMaterial(0x4A3728);
+            
+            // Main unit
+            const mainUnit = new THREE.Mesh(
+                new THREE.BoxGeometry(data.width, data.height, data.depth),
+                material
+            );
+            group.add(mainUnit);
+            
+            // Shelves
+            for(let i = 0; i < 3; i++) {
+                const shelf = new THREE.Mesh(
+                    new THREE.BoxGeometry(data.width * 0.9, data.height * 0.03, data.depth * 0.8),
+                    shelfMaterial
+                );
+                shelf.position.set(0, -data.height/3 + i * (data.height/3), data.depth * 0.1);
+                group.add(shelf);
+            }
+            
+            // TV screen
+            const tvScreen = new THREE.Mesh(
+                new THREE.BoxGeometry(data.width * 0.7, data.height * 0.5, 0.01),
+                new THREE.MeshStandardMaterial({ 
+                    color: 0x000000,
+                    emissive: 0x111111,
+                    roughness: 0.1,
+                    metalness: 0.9
+                })
+            );
+            tvScreen.position.set(0, data.height * 0.25, data.depth * 0.501);
+            group.add(tvScreen);
+            
+            // Speaker boxes
+            [-1, 1].forEach(side => {
+                const speaker = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.2, 0.3, 0.25),
+                    createMetalMaterial(0x333333)
+                );
+                speaker.position.set(side * (data.width/2.5), 0.15, data.depth * 0.5);
+                group.add(speaker);
+            });
+        }
+        
+        function createPersianRug(group, data) {
+            const rugMaterial = createFabricMaterial(data.color);
+            const patternMaterial = createFabricMaterial(0x2C3E50);
+            
+            // Base rug
+            const rug = new THREE.Mesh(
+                new THREE.BoxGeometry(data.width, data.height, data.depth),
+                rugMaterial
+            );
+            rug.position.set(0, data.height/2, 0);
+            group.add(rug);
+            
+            // Border pattern
+            const border = new THREE.Mesh(
+                new THREE.BoxGeometry(data.width * 0.95, data.height * 1.1, data.depth * 0.1),
+                patternMaterial
+            );
+            border.position.set(0, data.height/2, 0);
+            group.add(border);
+            
+            // Center medallion
+            const medallion = new THREE.Mesh(
+                new THREE.CircleGeometry(0.3, 32),
+                patternMaterial
+            );
+            medallion.rotation.x = -Math.PI/2;
+            medallion.position.set(0, data.height * 1.05, 0);
+            group.add(medallion);
+        }
+        
+        function createCoffeeTable(group, data) {
+            const tableTopMaterial = createGlassMaterial();
+            const legMaterial = createMetalMaterial(0x2F4F4F);
+            
+            // Glass table top
+            const tableTop = new THREE.Mesh(
+                new THREE.BoxGeometry(data.width, data.height * 0.05, data.depth),
+                tableTopMaterial
+            );
+            tableTop.position.set(0, data.height, 0);
+            group.add(tableTop);
+            
+            // Modern X-shaped legs
+            const legGeometry = new THREE.BoxGeometry(0.05, data.height * 0.95, 0.05);
+            [-1, 1].forEach(side => {
+                const leg = new THREE.Mesh(legGeometry, legMaterial);
+                leg.position.set(side * data.width/3, data.height * 0.475, side * data.depth/3);
+                leg.rotation.z = Math.PI/8 * side;
+                group.add(leg);
+            });
+            
+            // Magazine
+            const magazine = new THREE.Mesh(
+                new THREE.BoxGeometry(0.25, 0.001, 0.35),
+                createFabricMaterial(0xDC143C)
+            );
+            magazine.position.set(0.1, data.height * 1.05, 0.1);
+            magazine.rotation.y = Math.PI/6;
+            group.add(magazine);
+        }
+        
+        function createDresser(group, data) {
+            const material = createWoodMaterial(data.color);
+            const drawerMaterial = createWoodMaterial(0x4A3728);
+            const handleMaterial = createMetalMaterial(0x888888);
+            
+            // Main frame
+            const frame = new THREE.Mesh(
+                new THREE.BoxGeometry(data.width, data.height, data.depth),
+                material
+            );
+            group.add(frame);
+            
+            // Drawers (3x2 grid)
+            for(let row = 0; row < 2; row++) {
+                for(let col = 0; col < 3; col++) {
+                    const drawer = new THREE.Mesh(
+                        new THREE.BoxGeometry(data.width/3.2, data.height/2.2, data.depth * 0.8),
+                        drawerMaterial
+                    );
+                    drawer.position.set(
+                        -data.width/3 + col * (data.width/3),
+                        -data.height/4 + row * (data.height/2),
+                        data.depth * 0.1
+                    );
+                    group.add(drawer);
+                    
+                    // Drawer handle
+                    const handle = new THREE.Mesh(
+                        new THREE.BoxGeometry(0.15, 0.02, 0.04),
+                        handleMaterial
+                    );
+                    handle.position.set(
+                        -data.width/3 + col * (data.width/3),
+                        -data.height/4 + row * (data.height/2),
+                        data.depth * 0.51
+                    );
+                    group.add(handle);
+                }
+            }
+            
+            // Top surface
+            const top = new THREE.Mesh(
+                new THREE.BoxGeometry(data.width * 1.02, data.height * 0.05, data.depth * 1.02),
+                material
+            );
+            top.position.set(0, data.height * 0.525, 0);
+            group.add(top);
+        }
+        
+        function createBasicFurniture(group, data) {
             const material = new THREE.MeshStandardMaterial({ color: data.color });
+            const geometry = new THREE.BoxGeometry(data.width, data.height, data.depth);
             const mesh = new THREE.Mesh(geometry, material);
             mesh.position.y = data.height / 2;
             mesh.castShadow = true;
             mesh.receiveShadow = true;
             group.add(mesh);
-            
-            // Add details based on type
-            if (data.id === 'sofa' || data.id === 'chair') {
-                // Backrest
-                const backrest = new THREE.Mesh(
-                    new THREE.BoxGeometry(data.width, data.height * 1.2, data.depth * 0.1),
-                    material.clone()
-                );
-                backrest.position.set(0, data.height * 0.8, -data.depth * 0.45);
-                group.add(backrest);
-                
-                // Arms for sofa
-                if (data.id === 'sofa') {
-                    const armGeom = new THREE.BoxGeometry(data.width * 0.1, data.height * 0.8, data.depth);
-                    [-1, 1].forEach(side => {
-                        const arm = new THREE.Mesh(armGeom, material.clone());
-                        arm.position.set(side * data.width * 0.45, data.height * 0.5, 0);
-                        group.add(arm);
-                    });
-                }
-            }
-            
-            if (data.id === 'table' || data.id === 'desk') {
-                // Legs
-                const legGeom = new THREE.CylinderGeometry(0.03, 0.03, data.height);
-                const positions = [
-                    [-data.width/3, 0, -data.depth/3],
-                    [data.width/3, 0, -data.depth/3],
-                    [-data.width/3, 0, data.depth/3],
-                    [data.width/3, 0, data.depth/3]
-                ];
-                positions.forEach(pos => {
-                    const leg = new THREE.Mesh(legGeom, material.clone());
-                    leg.position.set(pos[0], pos[1] + data.height/2, pos[2]);
-                    group.add(leg);
-                });
-            }
-            
-            if (data.id === 'lamp') {
-                // Lampshade
-                const shade = new THREE.Mesh(
-                    new THREE.ConeGeometry(data.width * 1.5, data.height * 0.4, 8),
-                    new THREE.MeshStandardMaterial({ color: 0xFFFACD })
-                );
-                shade.position.y = data.height * 1.2;
-                group.add(shade);
-                
-                // Add light
-                const light = new THREE.PointLight(0xFFFFCC, 0.5, 2);
-                light.position.y = data.height;
-                group.add(light);
-            }
-            
-            group.userData.furnitureData = data;
-            return group;
+        }
+        
+        function createClayMaterial(color) {
+            return new THREE.MeshStandardMaterial({
+                color: color,
+                roughness: 0.8,
+                metalness: 0.1
+            });
         }
         
         async function startAR() {
@@ -592,21 +1318,36 @@
                 
                 renderer.autoClear = false;
                 renderer.xr.enabled = true;
+                renderer.shadowMap.enabled = true;
+                renderer.shadowMap.type = THREE.PCFSoftShadowMap;
                 
                 log('Setting XR session...');
                 await renderer.xr.setSession(session);
                 
-                // Lighting
+                // Enhanced lighting
                 const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
                 scene.add(ambientLight);
                 
-                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-                directionalLight.position.set(1, 3, 2);
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
+                directionalLight.position.set(5, 8, 5);
+                directionalLight.castShadow = true;
+                directionalLight.shadow.mapSize.width = 2048;
+                directionalLight.shadow.mapSize.height = 2048;
+                directionalLight.shadow.camera.near = 0.5;
+                directionalLight.shadow.camera.far = 50;
+                directionalLight.shadow.camera.left = -10;
+                directionalLight.shadow.camera.right = 10;
+                directionalLight.shadow.camera.top = 10;
+                directionalLight.shadow.camera.bottom = -10;
                 scene.add(directionalLight);
+                
+                // Additional fill light
+                const fillLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.3);
+                scene.add(fillLight);
                 
                 // Create reticle
                 reticle = new THREE.Mesh(
-                    new THREE.RingGeometry(0.1, 0.12, 32),
+                    new THREE.RingGeometry(0.1, 0.12, 32).rotateX(-Math.PI/2),
                     new THREE.MeshBasicMaterial({ 
                         color: 0x00ff00, 
                         side: THREE.DoubleSide,
@@ -623,6 +1364,18 @@
                 // Add controller for tap detection
                 controller = renderer.xr.getController(0);
                 controller.addEventListener('select', onSelect);
+                
+                // Add ray for visualization
+                const geometry = new THREE.BufferGeometry().setFromPoints([
+                    new THREE.Vector3(0, 0, 0),
+                    new THREE.Vector3(0, 0, -1)
+                ]);
+                const line = new THREE.Line(geometry, 
+                    new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 })
+                );
+                line.scale.z = 5;
+                controller.add(line);
+                
                 scene.add(controller);
                 
                 log('Starting render loop...');
@@ -633,6 +1386,25 @@
                 
                 // Animation loop
                 renderer.setAnimationLoop(render);
+                
+                // Raycasting for furniture selection
+                const raycaster = new THREE.Raycaster();
+                
+                // Handle clicks on furniture
+                controller.addEventListener('selectstart', () => {
+                    if (!selectedFurnitureType) {
+                        // Cast ray to select existing furniture
+                        raycaster.setFromCamera({ x: 0, y: 0 }, camera);
+                        const intersects = raycaster.intersectObjects(scene.children, true);
+                        
+                        for (let intersect of intersects) {
+                            if (intersect.object.userData.selectable && intersect.object.userData.parentGroup) {
+                                selectFurniture(intersect.object.userData.parentGroup);
+                                return;
+                            }
+                        }
+                    }
+                });
                 
             } catch (error) {
                 console.error('AR Error:', error);
@@ -650,7 +1422,7 @@
             const referenceSpace = renderer.xr.getReferenceSpace();
             const session = renderer.xr.getSession();
             
-                            // Request hit test source once
+            // Request hit test source once
             if (session && !hitTestSourceRequested) {
                 session.requestReferenceSpace('viewer').then((viewerSpace) => {
                     session.requestHitTestSource({ space: viewerSpace }).then((source) => {
@@ -677,9 +1449,12 @@
                         reticle.visible = true;
                         reticle.matrix.fromArray(pose.transform.matrix);
                         
+                        // Keep reticle horizontal
+                        reticle.rotation.x = -Math.PI/2;
+                        
                         statusDiv.textContent = selectedFurnitureType 
                             ? `Tap to place ${selectedFurnitureType.name}` 
-                            : 'Select furniture below';
+                            : 'Select furniture below or tap existing furniture';
                     }
                 } else {
                     reticle.visible = false;
@@ -700,7 +1475,7 @@
         }
         
         function onSelect() {
-            if (!reticle.visible) return;
+            if (!reticle.visible && selectedFurnitureType) return;
             
             if (selectedFurnitureType) {
                 // Place new furniture
@@ -708,6 +1483,12 @@
                 furniture.matrix.copy(reticle.matrix);
                 furniture.matrix.decompose(furniture.position, furniture.quaternion, furniture.scale);
                 furniture.matrixAutoUpdate = true;
+                
+                // Adjust position so furniture sits on floor
+                const bbox = new THREE.Box3().setFromObject(furniture);
+                const height = bbox.max.y - bbox.min.y;
+                furniture.position.y += height / 2;
+                
                 scene.add(furniture);
                 placedFurniture.push(furniture);
                 
