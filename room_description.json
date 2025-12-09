@@ -10,12 +10,12 @@
 			{
 				"type": "Door",
 				"align": "west-southwest",
-				"display": "none"
+				"display": "block"
 			},
 			{
 				"type": "Bookcase",
 				"align": "west-northwest",
-				"display": "none"
+				"display": "block"
 			},
 			{
 				"type": "Wardrobe",
