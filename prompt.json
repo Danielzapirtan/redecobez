@@ -4,9 +4,9 @@
 		"name": "Bedroom 001",
 		"description": "User's bedroom",
 		"shape": "rectangular",
-		"dimensions": [ 3.2, 3.1, 2.2 ],
+		"dimensions": [3.2, 3.1, 2.2],
 		"style": "Feng Shui",
-		"items": {
+		"items": [
 			{
 				"type": "Door",
 				"align": "west-southwest",
@@ -29,13 +29,13 @@
 			},
 			{
 				"type": "Window",
-				"type": "Plants",
+				"plants": true,
 				"align": "east",
 				"display": "block"
 			},
 			{
 				"type": "Desk",
-				"type": "Chair",
+				"chair": true,
 				"align": "south-southeast",
 				"display": "block"
 			},
@@ -44,8 +44,6 @@
 				"align": "south",
 				"display": "block"
 			}
-		}
-	},
-	"role": "image generator",
-	"task": "Generate a realistic 3d image of room_20251209_001 as if virtual camera is oriented towards east."
+		]
+	}
 }
