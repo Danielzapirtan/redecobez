@@ -1,0 +1,59 @@
+name: Generate Room Layout Image
+
+on:
+  push:
+    paths:
+      - 'room_description.json'
+      - 'generate_room_image.py'
+  workflow_dispatch:  # Manual trigger
+  schedule:
+    # Run daily at 8 AM UTC
+    - cron: '0 8 * * *'
+
+jobs:
+  generate-image:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install matplotlib numpy
+        
+    - name: Generate room image
+      run: |
+        python generate_room_image.py --input room_description.json --output room_layout.png
+        
+    - name: Check if image was generated
+      run: |
+        if [ -f "room_layout.png" ]; then
+          echo "Image generated successfully"
+          ls -la room_layout.png
+        else
+          echo "Error: Image not generated"
+          exit 1
+        fi
+        
+    - name: Upload image as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: room-layout-image
+        path: room_layout.png
+        retention-days: 30
+        
+    - name: Commit and push generated image
+      if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add room_layout.png
+        git commit -m "Auto-generated: Update room layout image" || echo "No changes to commit"
+        git push || echo "Nothing to push"
