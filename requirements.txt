@@ -1,3 +1,4 @@
+# requirements.txt
 torch>=2.0.0
 diffusers>=0.25.0
 transformers
@@ -5,3 +6,5 @@ accelerate
 gradio
 pillow
 numpy
+omegaconf
+safetensors
