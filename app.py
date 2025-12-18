@@ -94,14 +94,15 @@ with gr.Blocks(title="Room Panorama Generator") as demo:
             
             custom_details = gr.Textbox(
                 label="Additional Details",
-                placeholder="e.g., large windows, wooden floor, plants, natural light",
+                #placeholder="e.g., large windows, wooden floor, plants, natural light",
+                value = "light cream theme, L-shaped sofa, 2 armchairs, TV, elegant bookcase, window curtain",
                 lines=3
             )
             
             width_multiplier = gr.Slider(
                 minimum=2,
                 maximum=4,
-                value=3,
+                value=2,
                 step=1,
                 label="Panorama Width (multiplier)",
                 info="Higher = wider panoramic view"
