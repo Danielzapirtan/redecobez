@@ -26,9 +26,21 @@ def load_model():
 
 pipe = load_model()
 
+# PRESET CUSTOM DETAILS - EDIT THIS ARRAY
+PRESET_DETAILS = {
+    "bedroom": "bed, white furniture (elegant bookcase, wardrobe, desk, chair, nightstand), cozy",
+    "bedroom 2": "bed, white furniture (elegant bookcase, wardrobe, TV), cozy",
+    "living room": "light cream theme, L-shaped sofa, 2 armchairs, TV, elegant bookcase, window curtain",
+    "kitchen": "modern appliances, marble countertops, island with bar stools, pendant lights"
+}
+
+def update_custom_details(room_type):
+    """Update custom_details textbox based on selected room_type"""
+    return PRESET_DETAILS.get(room_type, "")
+
 def generate_room_panorama(room_type, style, custom_details, width_multiplier, num_steps):
     # Create panoramic prompt
-    base_prompt = f"{room_type} interior design, {style} style"
+    base_prompt = f"{room_type.replace(' 2', '')} interior design, {style} style"
     if custom_details:
         base_prompt += f", {custom_details}"
     
@@ -62,8 +74,9 @@ with gr.Blocks(title="Room Panorama Generator") as demo:
         with gr.Column():
             room_type = gr.Dropdown(
                 choices=[
-                    "living room",
                     "bedroom",
+                    "bedroom 2",
+                    "living room",
                     "kitchen",
                     "bathroom",
                     "office",
@@ -94,8 +107,8 @@ with gr.Blocks(title="Room Panorama Generator") as demo:
             
             custom_details = gr.Textbox(
                 label="Additional Details",
-                #placeholder="e.g., large windows, wooden floor, plants, natural light",
-                value = "light cream theme, L-shaped sofa, 2 armchairs, TV, elegant bookcase, window curtain",
+                placeholder="Auto-filled based on room type. You can edit this.",
+                value=PRESET_DETAILS["living room"],
                 lines=3
             )
             
@@ -128,9 +141,17 @@ with gr.Blocks(title="Room Panorama Generator") as demo:
             gr.Markdown("""
             ### Tips:
             - Width multiplier 3-4 works best for panoramic views
+            - Room presets auto-fill details (editable)
             - Add specific details for better results
             - Generation takes ~30-60 seconds on Colab GPU
             """)
+    
+    # Auto-update custom_details when room_type changes
+    room_type.change(
+        fn=update_custom_details,
+        inputs=[room_type],
+        outputs=[custom_details]
+    )
     
     generate_btn.click(
         fn=generate_room_panorama,
@@ -141,12 +162,10 @@ with gr.Blocks(title="Room Panorama Generator") as demo:
     # Examples
     gr.Examples(
         examples=[
-            ["living room", "modern", "windows with 3 elements and courtain, L-shaped sofa, 2 armchairs, elegant bookcase, TV", 3, 30],
-            ["bedroom", "scandinavian", "bed, white furniture (elegant bookcase, wardrobe, desk, chair, nightstand), cozy", 3, 30],
-            ["bedroom", "scandinavian", "bed, white furniture (elegant bookcase, wardrobe, TV), cozy", 3, 30],
-            ["living room", "modern", "floor-to-ceiling windows, marble floor, designer furniture", 3, 30],
-            ["bedroom", "scandinavian", "wooden bed, white walls, minimal decor, cozy", 3, 30],
-            ["kitchen", "industrial", "exposed brick, stainless steel appliances, concrete countertops", 4, 35],
+            ["living room", "modern", PRESET_DETAILS["living room"], 3, 30],
+            ["bedroom", "scandinavian", PRESET_DETAILS["bedroom"], 3, 30],
+            ["bedroom 2", "scandinavian", PRESET_DETAILS["bedroom 2"], 3, 30],
+            ["kitchen", "industrial", PRESET_DETAILS["kitchen"], 4, 35],
         ],
         inputs=[room_type, style, custom_details, width_multiplier, num_steps],
     )
