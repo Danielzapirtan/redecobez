@@ -28,10 +28,10 @@ pipe = load_model()
 
 # PRESET CUSTOM DETAILS - EDIT THIS ARRAY
 PRESET_DETAILS = {
-    "bedroom": "bed, white furniture (elegant bookcase, wardrobe, desk, chair, nightstand), cozy",
-    "bedroom 2": "bed, white furniture (elegant bookcase, wardrobe, TV), cozy",
-    "living room": "light cream theme, L-shaped sofa, 2 armchairs, TV, elegant bookcase, window curtain",
-    "kitchen": "modern appliances, marble countertops, island with bar stools, pendant lights"
+    "dormitor": "pat, mobilier alb (bibliotecă elegantă, dulap, birou, scaun, noptieră), confortabil",
+    "dormitor 2": "pat, mobilier alb (bibliotecă elegantă, dulap, TV), confortabil",
+    "living": "temă crem deschis, canapea în L, 2 fotolii, TV, bibliotecă elegantă, perdele",
+    "bucătărie": "electrocasnice moderne, blat de marmură, insulă cu scaune de bar, lămpi suspendate"
 }
 
 def update_custom_details(room_type):
@@ -64,28 +64,28 @@ def generate_room_panorama(room_type, style, custom_details, width_multiplier, n
     return image
 
 # Gradio interface
-with gr.Blocks(title="Room Panorama Generator") as demo:
+with gr.Blocks(title="Generator Panorame Camere") as demo:
     gr.Markdown("""
-    # 🏠 Room Panorama Generator
-    Generate cylindrical panoramic views of custom room designs without any API tokens!
+    # 🏠 Generator Panorame Camere
+    Generează imagini panoramice cilindrice ale designurilor personalizate de camere fără tokenuri API!
     """)
     
     with gr.Row():
         with gr.Column():
             room_type = gr.Dropdown(
                 choices=[
-                    "bedroom",
-                    "bedroom 2",
-                    "living room",
-                    "kitchen",
-                    "bathroom",
-                    "office",
-                    "dining room",
-                    "home theater",
-                    "gym"
+                    "dormitor",
+                    "dormitor 2",
+                    "living",
+                    "bucătărie",
+                    "baie",
+                    "birou",
+                    "sufragerie",
+                    "cinematograf acasă",
+                    "sală sport"
                 ],
-                value="living room",
-                label="Room Type"
+                value="living",
+                label="Tip Cameră"
             )
             
             style = gr.Dropdown(
@@ -93,22 +93,22 @@ with gr.Blocks(title="Room Panorama Generator") as demo:
                     "modern",
                     "minimalist",
                     "industrial",
-                    "scandinavian",
-                    "traditional",
-                    "contemporary",
+                    "scandinav",
+                    "tradițional",
+                    "contemporan",
                     "rustic",
                     "art deco",
-                    "mid-century modern",
-                    "japanese zen"
+                    "modern mid-century",
+                    "zen japonez"
                 ],
                 value="modern",
-                label="Design Style"
+                label="Stil Design"
             )
             
             custom_details = gr.Textbox(
-                label="Additional Details",
-                placeholder="Auto-filled based on room type. You can edit this.",
-                value=PRESET_DETAILS["living room"],
+                label="Detalii Adiționale",
+                placeholder="Completat automat pe baza tipului de cameră. Poți edita.",
+                value=PRESET_DETAILS["living"],
                 lines=3
             )
             
@@ -117,8 +117,8 @@ with gr.Blocks(title="Room Panorama Generator") as demo:
                 maximum=4,
                 value=2,
                 step=1,
-                label="Panorama Width (multiplier)",
-                info="Higher = wider panoramic view"
+                label="Lățime Panoramă (multiplicator)",
+                info="Mai mare = vedere panoramică mai largă"
             )
             
             num_steps = gr.Slider(
@@ -126,24 +126,24 @@ with gr.Blocks(title="Room Panorama Generator") as demo:
                 maximum=50,
                 value=30,
                 step=5,
-                label="Generation Steps",
-                info="Higher = better quality but slower"
+                label="Pași Generare",
+                info="Mai multe = calitate mai bună dar mai lent"
             )
             
-            generate_btn = gr.Button("🎨 Generate Panorama", variant="primary")
+            generate_btn = gr.Button("🎨 Generează Panorama", variant="primary")
         
         with gr.Column():
             output_image = gr.Image(
-                label="Generated Panorama",
+                label="Panorama Generată",
                 type="pil"
             )
             
             gr.Markdown("""
-            ### Tips:
-            - Width multiplier 3-4 works best for panoramic views
-            - Room presets auto-fill details (editable)
-            - Add specific details for better results
-            - Generation takes ~30-60 seconds on Colab GPU
+            ### Sfaturi:
+            - Multiplicatorul de lățime 3-4 funcționează cel mai bine pentru vederi panoramice
+            - Presetările de camere completează automat detaliile (editabile)
+            - Adaugă detalii specifice pentru rezultate mai bune
+            - Generarea durează ~30-60 secunde pe GPU Colab
             """)
     
     # Auto-update custom_details when room_type changes
@@ -162,10 +162,10 @@ with gr.Blocks(title="Room Panorama Generator") as demo:
     # Examples
     gr.Examples(
         examples=[
-            ["living room", "modern", PRESET_DETAILS["living room"], 3, 30],
-            ["bedroom", "scandinavian", PRESET_DETAILS["bedroom"], 3, 30],
-            ["bedroom 2", "scandinavian", PRESET_DETAILS["bedroom 2"], 3, 30],
-            ["kitchen", "industrial", PRESET_DETAILS["kitchen"], 4, 35],
+            ["living", "modern", PRESET_DETAILS["living"], 3, 30],
+            ["dormitor", "scandinav", PRESET_DETAILS["dormitor"], 3, 30],
+            ["dormitor 2", "scandinav", PRESET_DETAILS["dormitor 2"], 3, 30],
+            ["bucătărie", "industrial", PRESET_DETAILS["bucătărie"], 4, 35],
         ],
         inputs=[room_type, style, custom_details, width_multiplier, num_steps],
     )
