@@ -253,7 +253,7 @@ def update_custom_details(room_type):
 
 def generate_room_panorama(room_type, style, custom_details, width_multiplier, num_steps):
     # Create panoramic prompt
-    base_prompt = f"{room_type.replace(' 2', '')} interior design, {style} style"
+    base_prompt = f"{room_type.replace(' 2', '')} interior design"
     if custom_details:
         base_prompt += f", {custom_details}"
     
