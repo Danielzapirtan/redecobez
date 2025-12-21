@@ -28,11 +28,224 @@ pipe = load_model()
 
 # PRESET CUSTOM DETAILS - EDIT THIS ARRAY
 PRESET_DETAILS = {
-    "dormitor": "pat, mobilier alb (bibliotecă elegantă, dulap, birou, scaun, noptieră), confortabil",
-    "dormitor 2": "pat, mobilier alb (bibliotecă elegantă, dulap, TV), confortabil",
-    "living": "temă crem deschis, canapea în L, 2 fotolii, TV, bibliotecă elegantă, perdele",
-    "bucătărie": "electrocasnice moderne, blat de marmură, insulă cu scaune de bar, lămpi suspendate"
+    "dormitor": """
+{
+	"room_description": {
+		"id": "room_20251215_001",
+		"name": "Bedroom 001",
+		"description": "User's bedroom",
+		"shape": "rectangular",
+		"dimensions": [ 3.2, 3.1, 2.2 ],
+		"style": "Romanian Creative",
+      "theme": "light cream",
+      "requirement": "there should be enough furniture in the room",
+		"items": {
+			{
+				"type": "Door",
+				"align": "west-southwest"
+			},
+			{
+				"type": "Bookcase",
+				"align": "west-northwest",
+            "style": "decent"
+			},
+			{
+				"type": "Wardrobe",
+				"align": "north"
+			},
+			{
+				"type": "Bed",
+				"align": "north-northeast, towards room"
+			},
+			{
+				"type": "Classical Window",
+				"type": "Plants",
+				"align": "east",
+            "accessories": "curtain"
+			},
+			{
+				"type": "Desk",
+				"type": "Chair",
+				"align": "south-southeast"
+			},
+			{
+				"type": "Nightstand",
+				"align": "south"
+			}
+		}
+	},
+	"role": "image generator",
+	"task": "generate a 400 degrees cylindric panorama of room_20251215_001."
 }
+    """,
+    "dormitor 2": """
+{
+	"room_description": {
+		"id": "room_20251215_002",
+		"name": "Bedroom 002",
+		"description": "User's bedroom",
+		"shape": "rectangular",
+		"dimensions": [3.0, 3.0, 2.2],
+		"style": "Romanian Creative",
+      "theme": "light cream",
+      "requirement" :"Bookcase and Wardrobe should be a U-form above the bed",
+		"items": [
+			{
+				"type": "Door",
+				"align": "west-southwest",
+             "radius": 0.9
+			},
+			{
+				"type": "Bookcase",
+				"align": "north-northwest; north above the bed",
+             "style": "elegant"
+			},
+			{
+				"type": "Wardrobe",
+				"align": "north-northeast"
+			},
+			{
+				"type": "Bed",
+				"align": "north, under the other furniture"
+			},
+         {
+            "type": "TV",
+            "align": "south, fixed in the wall"
+         },
+			{
+				"type": "Classical Window",
+				"align": "east",
+            "accesories": "curtain"
+			}
+		]
+	},
+	"role": "image generator",
+	"task": "generate a 400 degrees cylindrical panorama of room_20251215_002."
+}
+    """,
+    "living": """
+{
+  "room_description": {
+    "id": "living_20251215_003",
+    "name": "Living 003",
+    "description": "User's living",
+    "shape": "rectangular, with an arch of 3m near west door, 60 degrees at west-southwest",
+    "dimensions": [5.0, 4.0, 2.2],
+    "style": "Creative",
+    "theme": "light cream",
+    "optimization": "maximize amount of furniture",
+    "items": [
+      {
+        "type": "Door",
+        "align": ["west", "north-northwest"],
+        "count": 2
+      },
+      {
+        "type": "Affordable L-shaped sofa",
+        "align": "fitting the arch",
+        "sizes": [2.0, 1.2]
+      },
+      {
+        "type": "TV",
+        "align": "creative"
+      },
+      {
+        "type": "Traditional Window",
+        "align": "east",
+        "position": "centered",
+        "total_width": 1.0,
+        "accessories": "curtain"
+      },
+      {
+        "type": "Affordable Armchair",
+        "align": "creative",
+        "count": 2
+      },
+      {
+        "type": "Bookcase",
+        "align": "creative",
+        "style": "elegant",
+        "length": 3.0
+      }
+    ]
+  },
+  "role": "image generator",
+  "task": "generate a 400 degrees cylindric panorama of living_20251215_003"
+}
+    """,
+    #"temă crem deschis, canapea în L, 2 fotolii, TV, bibliotecă elegantă, perdele",
+    "bucătărie": """
+    {
+  "room_description": {
+    "id": "kitchen_20251220_004",
+    "name": "Kitchen 004",
+    "description": "User's kitchen",
+    "shape": "rectangular",
+    "dimensions": [7.0, 5.0, 2.2],
+    "style": "Romanian Creative",
+    "theme": "light cream",
+    "items": [
+      {
+        "type": "Door",
+        "align": ["west", "south-southeast"],
+        "count": 2
+      },
+      {
+        "type": "Classical Window",
+        "align": "east",
+        "position": "centered",
+        "total_width": 1.0,
+      },
+      {
+			"type": "usual Romanian-style Kitchen furniture",
+			"placement": "creative",
+          "theme": "light cream"
+		},
+    ]
+  },
+  "role": "image generator",
+  "task": "generate a 400 degrees cylindric panorama of kitchen_20251220_004"
+}
+    """,
+    "baie": """
+{
+  "room_description": {
+    "id": "bathroom_20251220_005",
+    "name": "Bathroom 005",
+    "description": "User's bathroom",
+    "shape": "rectangular",
+    "dimensions": [4.5, 2.5, 2.2],
+    "style": "Creative Romanian",
+    "theme": "light cream",
+    "items": [
+      {
+        "type": "Door",
+        "align": "north-northwest",
+      },
+      {
+        "type": "Classical Window",
+        "align": "east-southeast",
+      },
+		{
+			"type": "Bath",
+          "align": south"
+		},
+		{
+			"type": "Sink",
+			"align": "west"
+		},
+		{
+			"type": "WC",
+			"align": "west-northwest"
+		}
+    ]
+  },
+  "role": "image generator",
+  "task": "generate a 400 degrees cylindric panorama of bathroom_20251220_005"
+}
+    """
+}
+
 
 def update_custom_details(room_type):
     """Update custom_details textbox based on selected room_type"""
